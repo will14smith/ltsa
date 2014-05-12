@@ -60,6 +60,8 @@ namespace LTSASharp.Fsp.Simplification
                 return value;
             if (value is FspEndProcess)
                 return value;
+            if (value is FspStopProcess)
+                return value;
 
             throw new NotImplementedException();
         }
