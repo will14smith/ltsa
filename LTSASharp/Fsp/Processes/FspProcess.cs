@@ -22,13 +22,4 @@ namespace LTSASharp.Fsp.Processes
             return string.Join(",\n", Body.Select(x => x.Key + " = " + x.Value));
         }
     }
-
-    class FspComposite
-    {
-        public string Name { get; set; }
-        public List<FspProcess> Body { get; set; }
-        // Relabel
-        // Prio
-        // Hiding
-    }
 }

@@ -5,6 +5,8 @@ namespace LTSASharp.Lts
 {
     internal class LtsLabel
     {
+        public static readonly LtsLabel Tau = new LtsLabel("tau");
+
         public LtsLabel(IFspActionLabel label)
         {
             if (!(label is FspActionName))
@@ -12,12 +14,16 @@ namespace LTSASharp.Lts
 
             Name = ((FspActionName)label).Name;
         }
+        public LtsLabel(string name)
+        {
+            Name = name;
+        }
 
         public string Name { get; private set; }
 
         public override string ToString()
         {
-            return "a" + Name;
+            return Name;
         }
 
         public override bool Equals(object obj)

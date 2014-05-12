@@ -1,4 +1,6 @@
-﻿using LTSASharp.Fsp.Processes;
+﻿using Antlr4.Runtime.Tree;
+using LTSASharp.Fsp.Composites;
+using LTSASharp.Fsp.Processes;
 using LTSASharp.Fsp.Simplification;
 using LTSASharp.Parsing;
 
@@ -45,7 +47,7 @@ namespace LTSASharp.Fsp.Conversion
             Unimpl(context.param());
 
             Check(body.Accept(new FspProcessConverter(env, process)));
-            
+
             Unimpl(context.alphabetExtension());
             Unimpl(context.relabel());
             Unimpl(context.hiding());
@@ -54,6 +56,26 @@ namespace LTSASharp.Fsp.Conversion
             process = new FspProcessSimplifier(process).Simplify();
 
             Description.Processes.Add(process);
+
+            return true;
+        }
+
+        public override bool VisitCompositeDef(FSPActualParser.CompositeDefContext context)
+        {
+            // OrOr UpperCaseIdentifier param? Equal compositeBody priority? hiding? Dot
+            var composite = new FspComposite();
+
+            var name = context.UpperCaseIdentifier();
+            var body = context.compositeBody();
+
+            composite.Name = name.GetText();
+
+            Check(body.Accept(new FspCompositeConverter(env, composite)));
+
+            Unimpl(context.priority());
+            Unimpl(context.hiding());
+
+            Description.Composites.Add(composite);
 
             return true;
         }

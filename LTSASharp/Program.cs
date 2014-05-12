@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using LTSASharp.Fsp;
 using LTSASharp.Fsp.Conversion;
 using LTSASharp.Lts;
@@ -62,8 +56,21 @@ namespace LTSASharp
             const string prog8 = "ITCH = (scratch->STOP).\n" +
                                  "CONVERSE = (think->talk->STOP).\n" +
                                  "||CONVERSE_ITCH = (ITCH || CONVERSE).";
+            const string prog9 = "CLOCK = (tick->CLOCK).\n" +
+                                 "RADIO = (on->off->RADIO).\n" +
+                                 "||CLOCK_RADIO = (CLOCK || RADIO).";
+            const string prog10 = "BILL = (play -> meet -> STOP).\n" +
+                                 "BEN  = (work -> meet -> STOP).\n" +
+                                 "||BILL_BEN = (BILL || BEN).";
+            const string prog11 = "MAKE_A   = (makeA->ready->used->MAKE_A).\n" +
+                                  "MAKE_B   = (makeB->ready->used->MAKE_B).\n" +
+                                  "ASSEMBLE = (ready->assemble->used->ASSEMBLE).\n" +
+                                  "||FACTORY = (MAKE_A || MAKE_B || ASSEMBLE).";
 
             var lts8 = CompileLTS(CompileFSP(new AntlrInputStream(prog8)));
+            var lts9 = CompileLTS(CompileFSP(new AntlrInputStream(prog9)));
+            var lts10 = CompileLTS(CompileFSP(new AntlrInputStream(prog10)));
+            var lts11 = CompileLTS(CompileFSP(new AntlrInputStream(prog11)));
         }
 
         private static LtsDescription CompileLTS(FspDescription fsp)
@@ -85,7 +92,15 @@ namespace LTSASharp
             var fspConverter = new FspConveter();
             parser.fsp_description().Accept(fspConverter);
 
-            Console.WriteLine(fspConverter.Description);
+            foreach (var p in fspConverter.Description.Processes)
+            {
+                Console.WriteLine(p);
+            }
+            foreach (var c in fspConverter.Description.Composites)
+            {
+                Console.WriteLine(c);
+            }
+            Console.WriteLine();
 
             return fspConverter.Description;
         }

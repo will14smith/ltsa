@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Processes;
 
 namespace LTSASharp.Fsp
@@ -12,13 +9,10 @@ namespace LTSASharp.Fsp
         public FspDescription()
         {
             Processes = new List<FspProcess>();
+            Composites = new List<FspComposite>();
         }
 
         public List<FspProcess> Processes { get; private set; }
-
-        public override string ToString()
-        {
-            return "{" + string.Join(", ", Processes.Select(x => x.ToString())) + "}";
-        }
+        public List<FspComposite> Composites { get; private set; } 
     }
 }

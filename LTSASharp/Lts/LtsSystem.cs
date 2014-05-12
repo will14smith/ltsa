@@ -6,14 +6,14 @@ namespace LTSASharp.Lts
     {
         public LtsSystem()
         {
-            Actions = new HashSet<LtsAction>();
+            Transitions = new HashSet<LtsAction>();
             Alphabet = new HashSet<LtsLabel>();
             States = new HashSet<LtsState>();
         }
 
         public ISet<LtsState> States { get; private set; }
         public ISet<LtsLabel> Alphabet { get; private set; }
-        public ISet<LtsAction> Actions { get; private set; }
+        public ISet<LtsAction> Transitions { get; private set; }
         public LtsState InitialState { get; set; }
     }
 }

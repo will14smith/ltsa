@@ -6,9 +6,9 @@ namespace LTSASharp.Lts
     {
         public LtsDescription()
         {
-            Systems = new List<LtsSystem>();
+            Systems = new Dictionary<string, LtsSystem>();
         }
 
-        public List<LtsSystem> Systems { get; private set; }
+        public Dictionary<string, LtsSystem> Systems { get; private set; }
     }
 }

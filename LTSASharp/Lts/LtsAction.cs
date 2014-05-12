@@ -2,9 +2,6 @@ namespace LTSASharp.Lts
 {
     internal class LtsAction
     {
-        //TODO
-        public static readonly LtsAction Tau = new LtsAction(null, null, null);
-
         public LtsState Source { get; private set; }
         public LtsLabel Action { get; private set; }
         public LtsState Destination { get; private set; }
@@ -29,12 +26,12 @@ namespace LTSASharp.Lts
                 return false;
 
             var other = (LtsAction) obj;
-            return other.Source == Source && other.Action == Action && other.Destination == Destination;
+            return Equals(other.Source, Source) && Equals(other.Action, Action) && Equals(other.Destination, Destination);
         }
 
         public override int GetHashCode()
         {
-            if (ReferenceEquals(this, Tau))
+            if (ReferenceEquals( Action, LtsLabel.Tau))
                 return 0;
 
             return Source.GetHashCode() ^ Action.GetHashCode() ^ Destination.GetHashCode();

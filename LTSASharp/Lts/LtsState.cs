@@ -7,7 +7,8 @@ namespace LTSASharp.Lts
     {
         public static readonly LtsState End = new LtsState(-1);
         public static int Initial = 0;
-        public static int Ref = -2;
+        public static int Ref = -10;
+        public static int Composite = -11;
 
         public int Number { get; private set; }
 

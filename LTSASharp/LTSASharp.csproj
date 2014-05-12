@@ -46,8 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugListener.cs" />
+    <Compile Include="Fsp\Composites\FspCompositeBody.cs" />
+    <Compile Include="Fsp\Composites\FspMultiComposite.cs" />
+    <Compile Include="Fsp\Composites\FspRefComposite.cs" />
     <Compile Include="Fsp\Conversion\FspBaseConverter.cs" />
     <Compile Include="Fsp\Conversion\FspChoiceConverter.cs" />
+    <Compile Include="Fsp\Conversion\FspCompositeConverter.cs" />
     <Compile Include="Fsp\Conversion\FspConverterEnvironment.cs" />
     <Compile Include="Fsp\Conversion\FspExpressionConverter.cs" />
     <Compile Include="Fsp\Conversion\FspLabelConverter.cs" />
@@ -84,6 +88,7 @@
     <Compile Include="Fsp\Choices\FspChoice.cs" />
     <Compile Include="Fsp\Choices\FspChoices.cs" />
     <Compile Include="Fsp\Conversion\FspConveter.cs" />
+    <Compile Include="Fsp\Composites\FspComposite.cs" />
     <Compile Include="Fsp\Processes\FspEndProcess.cs" />
     <Compile Include="Fsp\Processes\FspErrorProcess.cs" />
     <Compile Include="Fsp\Processes\FspLocalProcess.cs" />
@@ -101,6 +106,7 @@
     <Compile Include="Fsp\Ranges\FspRefRange.cs" />
     <Compile Include="Fsp\Simplification\FspProcessExpander.cs" />
     <Compile Include="Fsp\Simplification\FspProcessSimplifier.cs" />
+    <Compile Include="Lts\LtsCompositeState.cs" />
     <Compile Include="Lts\Conversion\LtsConverter.cs" />
     <Compile Include="Lts\LtsRefState.cs" />
     <Compile Include="Lts\LtsDescription.cs" />
