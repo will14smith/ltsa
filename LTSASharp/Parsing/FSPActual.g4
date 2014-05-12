@@ -83,8 +83,7 @@ argumentList: expression (Comma expression)*;
 
 // 1.5	Composite Process
 compositeDef: OrOr UpperCaseIdentifier param? Equal compositeBody priority? hiding? Dot;
-compositeBody: prefixLabel? processRef relabel?
-             | prefixLabel? LRound parallelComposition RRound relabel?
+compositeBody: prefixLabel? (processRef | LRound parallelComposition RRound) relabel?
              | ForAll ranges compositeBody  //replication
              | If expression Then compositeBody (Else compositeBody)? //conditional
              ;
