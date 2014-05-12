@@ -102,7 +102,8 @@ namespace LTSASharp.Lts.Conversion
                 return lts;
             }
 
-            if (process is FspEndProcess)
+            //TODO these should be different
+            if (process is FspEndProcess || process is FspStopProcess)
             {
                 lts.States.Add(LtsState.End);
                 lts.Actions.Add(LtsAction.Tau);
