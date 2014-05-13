@@ -30,7 +30,6 @@ namespace LTSASharp.Fsp.Simplification
             FspLocalProcess last = null;
             current = process.Body[process.Name];
 
-
             while (last != current)
             {
                 last = current;

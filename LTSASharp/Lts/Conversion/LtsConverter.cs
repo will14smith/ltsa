@@ -94,29 +94,7 @@ namespace LTSASharp.Lts.Conversion
                             lts.Transitions.Add(new LtsAction(s1, a, s2));
             
             // prune unused states and transitions
-            var count = 0;
-            while (lts.Transitions.Count != count)
-            {
-                foreach (var transition in lts.Transitions.ToList())
-                {
-                    if (lts.InitialState == transition.Source)
-                        continue;
-
-                    if (!lts.Transitions.Any(x => x.Destination == transition.Source))
-                        lts.Transitions.Remove(transition);
-                }
-
-                count = lts.Transitions.Count;
-            }
-
-            foreach (var state in lts.States.ToList())
-            {
-                if (lts.InitialState == state)
-                    continue;
-
-                if (!lts.Transitions.Any(x => x.Destination == state))
-                    lts.States.Remove(state);
-            }
+            lts.Prune();
 
             return lts;
         }
@@ -163,6 +141,8 @@ namespace LTSASharp.Lts.Conversion
                     lts.Transitions.Add(new LtsAction(action.Source, action.Action, dest));
                 }
             }
+
+            lts.Prune();
 
             return lts;
         }
