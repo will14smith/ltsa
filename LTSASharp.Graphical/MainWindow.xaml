@@ -1,0 +1,16 @@
+﻿<Window x:Class="LTSASharp.Graphical.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpf="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
+        xmlns:controls="clr-namespace:LTSASharp.Graphical.Controls"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+
+    <Grid>
+        <wpf:ZoomControl>
+            <controls:LtsMachine x:Name="Machine"></controls:LtsMachine>
+        </wpf:ZoomControl>
+    </Grid>
+</Window>
