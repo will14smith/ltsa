@@ -35,10 +35,12 @@ namespace LTSASharp
             const string prog0 = "DRINKS = (red -> coffee -> DRINKS | blue -> tea -> DRINKS).";
             const string prog1 = "FAULTY = ({red,blue,green} -> FAULTY | yellow -> candy -> FAULTY).";
             const string prog2 = "COIN = (toss -> heads -> COIN | toss -> tails -> COIN).";
+            const string prog3 = "INPUTSPEED = (engineOn -> CHECKSPEED), CHECKSPEED = (speed -> CHECKSPEED |engineOff -> INPUTSPEED).";
 
             var lts0 = CompileLTS(CompileFSP(new AntlrInputStream(prog0)));
             var lts1 = CompileLTS(CompileFSP(new AntlrInputStream(prog1)));
             var lts2 = CompileLTS(CompileFSP(new AntlrInputStream(prog2)));
+            //TODO INFINITE var lts3 = CompileLTS(CompileFSP(new AntlrInputStream(prog3)));
         }
 
         private static void Variables()
@@ -49,7 +51,7 @@ namespace LTSASharp
 
             var lts0 = CompileLTS(CompileFSP(new AntlrInputStream(prog0)));
             var lts1 = CompileLTS(CompileFSP(new AntlrInputStream(prog1)));
-            //TODO var lts2 = CompileLTS(CompileFSP(new AntlrInputStream(prog2)));
+            //TODO FSP var lts2 = CompileLTS(CompileFSP(new AntlrInputStream(prog2)));
         }
 
         public static void BasicComposition()
@@ -86,10 +88,10 @@ namespace LTSASharp
                                  "USER = (acquire->use->release->USER).\n" +
                                  "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
 
-            var lts0 = CompileLTS(CompileFSP(new AntlrInputStream(prog0)));
-            var lts1 = CompileLTS(CompileFSP(new AntlrInputStream(prog1)));
-            var lts2 = CompileLTS(CompileFSP(new AntlrInputStream(prog2)));
-            var lts3 = CompileLTS(CompileFSP(new AntlrInputStream(prog3)));
+            //TODO FSP var lts0 = CompileLTS(CompileFSP(new AntlrInputStream(prog0)));
+            //TODO FSP var lts1 = CompileLTS(CompileFSP(new AntlrInputStream(prog1)));
+            //TODO FSP var lts2 = CompileLTS(CompileFSP(new AntlrInputStream(prog2)));
+            //TODO FSP var lts3 = CompileLTS(CompileFSP(new AntlrInputStream(prog3)));
         }
 
         private static LtsDescription CompileLTS(FspDescription fsp)
