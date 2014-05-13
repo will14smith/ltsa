@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LTSASharp.Fsp.Composites
 {
-    class FspComposite
+    public class FspComposite
     {
         public FspComposite()
         {

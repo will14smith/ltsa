@@ -4,7 +4,7 @@ using LTSASharp.Fsp.Processes;
 
 namespace LTSASharp.Fsp
 {
-    class FspDescription
+    public class FspDescription
     {
         public FspDescription()
         {

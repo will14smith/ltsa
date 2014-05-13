@@ -1,14 +1,13 @@
-﻿using Antlr4.Runtime.Tree;
-using LTSASharp.Fsp.Composites;
+﻿using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Processes;
 using LTSASharp.Fsp.Simplification;
 using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
 {
-    class FspConveter : FspBaseConverter
+    public class FspConveter : FspBaseConverter
     {
-        private FspConverterEnvironment env;
+        private readonly FspConverterEnvironment env;
 
         public FspDescription Description { get; private set; }
 

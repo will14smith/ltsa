@@ -1,6 +1,6 @@
 namespace LTSASharp.Lts
 {
-    internal class LtsAction
+    public class LtsAction
     {
         public LtsState Source { get; private set; }
         public LtsLabel Action { get; private set; }

@@ -1,9 +1,8 @@
 using System;
-using LTSASharp.Lts.Conversion;
 
 namespace LTSASharp.Lts
 {
-    internal class LtsState
+    public class LtsState
     {
         public static readonly LtsState End = new LtsState(-1);
         public static int Initial = 0;

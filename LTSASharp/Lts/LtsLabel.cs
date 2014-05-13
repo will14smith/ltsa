@@ -3,7 +3,7 @@ using LTSASharp.Fsp.Labels;
 
 namespace LTSASharp.Lts
 {
-    internal class LtsLabel
+    public class LtsLabel
     {
         public static readonly LtsLabel Tau = new LtsLabel("tau");
 

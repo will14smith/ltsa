@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LTSASharp.Fsp.Processes
 {
-    class FspProcess
+    public class FspProcess
     {
         public FspProcess()
         {

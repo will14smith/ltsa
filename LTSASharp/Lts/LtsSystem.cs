@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LTSASharp.Lts
 {
-    class LtsSystem
+    public class LtsSystem
     {
         public LtsSystem()
         {

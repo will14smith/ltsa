@@ -1,6 +1,6 @@
 ﻿namespace LTSASharp.Fsp.Labels
 {
-    interface IFspActionLabel
+    public interface IFspActionLabel
     {
     }
 }

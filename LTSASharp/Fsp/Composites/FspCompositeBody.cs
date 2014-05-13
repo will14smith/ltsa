@@ -1,6 +1,6 @@
 namespace LTSASharp.Fsp.Composites
 {
-    abstract class FspCompositeBody
+    public abstract class FspCompositeBody
     {
     }
 }

@@ -6,7 +6,7 @@ using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
 {
-    abstract class FspBaseConverter<TReturn> : FSPActualBaseVisitor<TReturn>
+    public abstract class FspBaseConverter<TReturn> : FSPActualBaseVisitor<TReturn>
     {
         protected override bool ShouldVisitNextChild(IRuleNode node, TReturn currentResult)
         {
@@ -53,7 +53,7 @@ namespace LTSASharp.Fsp.Conversion
         }
     }
 
-    abstract class FspBaseConverter : FspBaseConverter<bool>
+    public abstract class FspBaseConverter : FspBaseConverter<bool>
     {
 
     }

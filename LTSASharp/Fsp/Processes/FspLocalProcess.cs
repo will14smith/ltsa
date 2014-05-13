@@ -2,7 +2,7 @@
 
 namespace LTSASharp.Fsp.Processes
 {
-    internal abstract class FspLocalProcess : IFspActionLabel
+    public abstract class FspLocalProcess : IFspActionLabel
     {
     }
 }

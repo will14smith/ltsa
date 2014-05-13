@@ -2,7 +2,7 @@
 
 namespace LTSASharp.Lts
 {
-    internal class LtsDescription
+    public class LtsDescription
     {
         public LtsDescription()
         {

@@ -12,7 +12,7 @@ using LTSASharp.Utilities;
 
 namespace LTSASharp.Lts.Conversion
 {
-    class LtsConverter
+    public class LtsConverter
     {
         private readonly FspDescription fspDescription;
         private int stateNumber = LtsState.Initial;
