@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using LTSASharp.Fsp;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Composites;
@@ -92,7 +89,7 @@ namespace LTSASharp.Lts.Conversion
                     foreach (var s2 in lts.States)
                         if (ShouldAddTransition(p, q, Tuple.Create(stateMap[s1], a, stateMap[s2])))
                             lts.Transitions.Add(new LtsAction(s1, a, s2));
-            
+
             // prune unused states and transitions
             lts.Prune();
 
@@ -119,10 +116,15 @@ namespace LTSASharp.Lts.Conversion
         #endregion
 
         #region Processes
+
+        private Dictionary<string, LtsState> initialStates;
+
         private LtsSystem Convert(FspProcess fsp)
         {
             stateNumber = 0;
-            var lts = Convert(fsp.Body[fsp.Name]);
+            initialStates = new Dictionary<string, LtsState> { { fsp.Name, new LtsState(stateNumber) } };
+
+            var lts = Convert(fsp.Body[fsp.Name], fsp);
 
             foreach (var action in lts.Transitions.ToList())
             {
@@ -146,7 +148,7 @@ namespace LTSASharp.Lts.Conversion
 
             return lts;
         }
-        private LtsSystem Convert(FspLocalProcess process)
+        private LtsSystem Convert(FspLocalProcess process, FspProcess fsp)
         {
             var lts = new LtsSystem();
 
@@ -164,17 +166,7 @@ namespace LTSASharp.Lts.Conversion
                 {
                     var a = new LtsLabel(c.Label);
 
-                    if (c.Process is FspRefProcess)
-                    {
-                        var d = new LtsRefState(((FspRefProcess)c.Process).Name);
-
-                        lts.Alphabet.Add(a);
-                        lts.Transitions.Add(new LtsAction(p, a, d));
-
-                        continue;
-                    }
-
-                    var ltsC = Convert(c.Process);
+                    var ltsC = Convert(c.Process, fsp);
 
                     //S
                     lts.States.AddRange(ltsC.States);
@@ -195,7 +187,7 @@ namespace LTSASharp.Lts.Conversion
             if (process is FspEndProcess || process is FspStopProcess)
             {
                 lts.States.Add(LtsState.End);
-               //TODO lts.Transitions.Add(Tau);
+                //TODO lts.Transitions.Add(Tau);
 
                 lts.InitialState = LtsState.End;
 
@@ -203,8 +195,20 @@ namespace LTSASharp.Lts.Conversion
             }
 
             if (process is FspRefProcess)
-                // for now die.
-                throw new InvalidOperationException();
+            {
+                var target = ((FspRefProcess)process).Name;
+
+                if (!initialStates.ContainsKey(target))
+                {
+                    initialStates.Add(target, new LtsState(stateNumber));
+                    var refLts = Convert(fsp.Body[target], fsp);
+
+                    return refLts;
+                }
+
+                lts.InitialState = initialStates[target];
+                return lts;
+            }
 
             throw new NotImplementedException();
         }

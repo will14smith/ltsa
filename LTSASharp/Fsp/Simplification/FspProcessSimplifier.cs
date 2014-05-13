@@ -95,7 +95,8 @@ namespace LTSASharp.Fsp.Simplification
 
         private FspChoice Simplify(FspChoice local)
         {
-            var p2 = Simplify(local.Process, false);
+            //TODO? var p2 = Simplify(local.Process, false);
+            var p2 = local.Process;
 
             IFspActionLabel label = local.Label;
             if (local.Label is FspFollowAction)
