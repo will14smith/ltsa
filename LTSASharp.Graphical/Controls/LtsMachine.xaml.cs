@@ -73,7 +73,7 @@ namespace LTSASharp.Graphical.Controls
                 i++;
             }
 
-            i = 0;
+            //TODO merge parallel edges (i.e. 2->a->3, 2->b->3 == 2->{a,b}->3)
             foreach (var transition in system.Transitions)
             {
                 var arc = new Path();

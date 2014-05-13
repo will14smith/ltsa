@@ -24,10 +24,67 @@ namespace LTSASharp.Fsp.Simplification
 
             foreach (var entry in process.Body)
             {
-                newProcess.Body.Add(entry.Key, Expand(entry.Value));
+                if (entry.Value is FspIndexedProcess)
+                {
+                    var results = ExpandIndexed(entry.Key, (FspIndexedProcess)entry.Value);
+                    foreach (var result in results)
+                        newProcess.Body.Add(result.Key, result.Value);
+                }
+                else
+                {
+                    newProcess.Body.Add(entry.Key, Expand(entry.Value));
+                }
             }
 
             return newProcess;
+        }
+
+        private Dictionary<string, FspLocalProcess> ExpandIndexed(string name, FspIndexedProcess value)
+        {
+            var results = new Dictionary<string, FspLocalProcess>();
+
+            if (value.Index is FspActionRange)
+            {
+                var range = (FspActionRange)value.Index;
+                var bounds = range.Range.GetBounds(env);
+
+                for (var i = bounds.Lower; i <= bounds.Upper; i++)
+                {
+                    env.PushVariable(range.Target, i);
+
+                    var newName = name + "." + i;
+                    if (value.Process is FspIndexedProcess)
+                    {
+                        var innerResults = ExpandIndexed(newName, (FspIndexedProcess)value.Process);
+                        foreach (var result in innerResults)
+                            results.Add(result.Key, result.Value);
+                    }
+                    else
+                    {
+                        results.Add(newName, Expand(value.Process));
+                    }
+
+                    env.PopVariable(range.Target);
+                }
+
+                return results;
+            }
+
+            if (value.Index is FspExpressionRange)
+            {
+                var range = (FspExpressionRange)value.Index;
+                var expr = range.Expr.Evaluate(env);
+
+                IFspActionLabel label;
+                if (expr is FspIntegerExpr)
+                    label = new FspActionName(((FspIntegerExpr)expr).Value.ToString());
+                else
+                    label = new FspExpressionRange(expr);
+
+                throw new NotImplementedException();
+            }
+
+            throw new InvalidOperationException();
         }
 
         private FspLocalProcess Expand(FspLocalProcess value)
@@ -57,7 +114,27 @@ namespace LTSASharp.Fsp.Simplification
             }
 
             if (value is FspRefProcess)
-                return value;
+            {
+                var refProc = (FspRefProcess)value;
+                if (!refProc.Indices.Any())
+                    return value;
+
+                var newIndices = new List<FspExpression>();
+                foreach (var index in refProc.Indices)
+                {
+                    newIndices.Add(index.Evaluate(env));
+                }
+
+                if (newIndices.All(x => x is FspIntegerExpr))
+                {
+                    // flattern
+                    var name = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
+
+                    return new FspRefProcess(name);
+                }
+
+                return new FspRefProcess(refProc.Name, newIndices);
+            }
             if (value is FspEndProcess)
                 return value;
             if (value is FspStopProcess)

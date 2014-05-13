@@ -91,6 +91,7 @@
     <Compile Include="Fsp\Composites\FspComposite.cs" />
     <Compile Include="Fsp\Processes\FspEndProcess.cs" />
     <Compile Include="Fsp\Processes\FspErrorProcess.cs" />
+    <Compile Include="Fsp\Processes\FspIndexedProcess.cs" />
     <Compile Include="Fsp\Processes\FspLocalProcess.cs" />
     <Compile Include="Fsp\Processes\FspProcess.cs" />
     <Compile Include="Fsp\Conversion\FspProcessConverter.cs" />

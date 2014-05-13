@@ -1,5 +1,8 @@
-﻿using LTSASharp.Fsp.Choices;
+﻿using System.Linq;
+using LTSASharp.Fsp.Choices;
+using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
+using LTSASharp.Fsp.Ranges;
 using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
@@ -53,9 +56,35 @@ namespace LTSASharp.Fsp.Conversion
         {
             // UpperCaseIdentifier indexRanges? Equal localProcess
             var name = context.UpperCaseIdentifier().GetText();
-            Unimpl(context.indexRanges());
             var local = context.localProcess().Accept(this);
-            
+
+            if (context.indexRanges() != null)
+            {
+                // (LSquare (expression|actionRange) RSquare)+
+                //TODO is order important?
+
+                foreach (var t in context.indexRanges().expression())
+                {
+                    var expr = t.Accept(new FspExpressionConverter(env));
+
+                    local = new FspIndexedProcess(local, new FspExpressionRange(expr));
+                }
+                foreach (var t in context.indexRanges().actionRange())
+                {
+                    var range = t.range() != null
+                        ? t.range().Accept(new FspRangeConverter(env))
+                        : t.set().Accept(new FspRangeConverter(env));
+
+                    var tName = t.LowerCaseIdentifier();
+
+                    var index = tName != null
+                        ? new FspActionRange(tName.GetText(), range)
+                        : new FspActionRange(range);
+
+                    local = new FspIndexedProcess(local, index);
+                }
+            }
+
             process.Body.Add(name, local);
 
             return local;
@@ -97,12 +126,17 @@ namespace LTSASharp.Fsp.Conversion
             switch (name)
             {
                 case "STOP":
+                    Unimpl(context.indices());
                     return new FspStopProcess();
                 case "END":
+                    Unimpl(context.indices());
                     return new FspEndProcess();
                 case "ERROR":
+                    Unimpl(context.indices());
                     return new FspErrorProcess();
                 default:
+                    if (context.indices() != null)
+                        return new FspRefProcess(name, context.indices().expression().Select(x=>x.Accept(new FspExpressionConverter(env))));
                     return new FspRefProcess(name);
             }
         }
