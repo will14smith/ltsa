@@ -37,5 +37,18 @@ namespace LTSASharp.Tests
 
             //TODO make some assertions
         }
+
+        [TestMethod]
+        public void ProcessPartialVariable()
+        {
+            const string prog = "P         = S[0]," +
+                                "S[i:0..2] = (a -> S[i+1])," +
+                                "S[3]      = STOP.";
+
+            var fsp = CompileFsp(prog);
+            var lts = CompileLts(fsp);
+
+            //TODO make some assertions
+        }
     }
 }

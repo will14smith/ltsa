@@ -28,7 +28,7 @@ namespace LTSASharp.Fsp.Simplification
             var newProcess = new FspProcess { Name = process.Name };
 
             FspLocalProcess last = null;
-            current = process.Body[process.Name];
+            current = process.Body[process.Name].Single();
 
             while (last != current)
             {
@@ -41,7 +41,7 @@ namespace LTSASharp.Fsp.Simplification
             foreach (var b in process.Body)
             {
                 if (b.Key == process.Name)
-                    newProcess.Body.Add(process.Name, current);
+                    newProcess.Body.Map(process.Name, current);
                 else //TODO if(references.Contains(b.Key))
                     newProcess.Body.Add(b.Key, b.Value);
             }
@@ -67,7 +67,7 @@ namespace LTSASharp.Fsp.Simplification
                 if (top)
                     AddRewrite(name, process.Name);
 
-                return process.Body[name];
+                return process.Body[name].Single();
             }
 
             if (local is FspChoices)

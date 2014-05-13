@@ -124,7 +124,7 @@ namespace LTSASharp.Lts.Conversion
             stateNumber = 0;
             initialStates = new Dictionary<string, LtsState> { { fsp.Name, new LtsState(stateNumber) } };
 
-            var lts = Convert(fsp.Body[fsp.Name], fsp);
+            var lts = Convert(fsp.Body[fsp.Name].Single(), fsp);
 
             foreach (var action in lts.Transitions.ToList())
             {
@@ -201,7 +201,7 @@ namespace LTSASharp.Lts.Conversion
                 if (!initialStates.ContainsKey(target))
                 {
                     initialStates.Add(target, new LtsState(stateNumber));
-                    var refLts = Convert(fsp.Body[target], fsp);
+                    var refLts = Convert(fsp.Body[target].Single(), fsp);
 
                     return refLts;
                 }

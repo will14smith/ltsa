@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Antlr4.Runtime.Misc;
 
 namespace LTSASharp.Fsp.Processes
 {
@@ -7,11 +7,11 @@ namespace LTSASharp.Fsp.Processes
     {
         public FspProcess()
         {
-            Body = new Dictionary<string, FspLocalProcess>();
+            Body = new MultiMap<string, FspLocalProcess>();
         }
 
         public string Name { get; set; }
-        public Dictionary<string, FspLocalProcess> Body { get; private set; }
+        public MultiMap<string, FspLocalProcess> Body { get; private set; }
 
         // Alphabet ext
         // Relabl 
@@ -19,7 +19,7 @@ namespace LTSASharp.Fsp.Processes
 
         public override string ToString()
         {
-            return string.Join(",\n", Body.Select(x => x.Key + " = " + x.Value));
+            return string.Join(",\n", Body.GetPairs().Select(x => x.Item1 + " = " + x.Item2));
         }
     }
 }

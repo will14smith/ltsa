@@ -24,16 +24,17 @@ namespace LTSASharp.Fsp.Simplification
 
             foreach (var entry in process.Body)
             {
-                if (entry.Value is FspIndexedProcess)
-                {
-                    var results = ExpandIndexed(entry.Key, (FspIndexedProcess)entry.Value);
-                    foreach (var result in results)
-                        newProcess.Body.Add(result.Key, result.Value);
-                }
-                else
-                {
-                    newProcess.Body.Add(entry.Key, Expand(entry.Value));
-                }
+                foreach (var e in entry.Value)
+                    if (e is FspIndexedProcess)
+                    {
+                        var results = ExpandIndexed(entry.Key, (FspIndexedProcess)e);
+                        foreach (var result in results)
+                            newProcess.Body.Map(result.Key, result.Value);
+                    }
+                    else
+                    {
+                        newProcess.Body.Map(entry.Key, Expand(e));
+                    }
             }
 
             return newProcess;
@@ -73,15 +74,22 @@ namespace LTSASharp.Fsp.Simplification
             if (value.Index is FspExpressionRange)
             {
                 var range = (FspExpressionRange)value.Index;
-                var expr = range.Expr.Evaluate(env);
+                var val = range.Expr.GetValue(env);
 
-                IFspActionLabel label;
-                if (expr is FspIntegerExpr)
-                    label = new FspActionName(((FspIntegerExpr)expr).Value.ToString());
+                var newName = name + "." + val;
+
+                if (value.Process is FspIndexedProcess)
+                {
+                    var innerResults = ExpandIndexed(newName, (FspIndexedProcess)value.Process);
+                    foreach (var result in innerResults)
+                        results.Add(result.Key, result.Value);
+                }
                 else
-                    label = new FspExpressionRange(expr);
+                {
+                    results.Add(newName, Expand(value.Process));
+                }
 
-                throw new NotImplementedException();
+                return results;
             }
 
             throw new InvalidOperationException();
@@ -119,11 +127,7 @@ namespace LTSASharp.Fsp.Simplification
                 if (!refProc.Indices.Any())
                     return value;
 
-                var newIndices = new List<FspExpression>();
-                foreach (var index in refProc.Indices)
-                {
-                    newIndices.Add(index.Evaluate(env));
-                }
+                var newIndices = refProc.Indices.Select(index => index.Evaluate(env)).ToList();
 
                 if (newIndices.All(x => x is FspIntegerExpr))
                 {
@@ -143,8 +147,8 @@ namespace LTSASharp.Fsp.Simplification
             throw new NotImplementedException();
         }
 
-        private FspExpressionEnvironment env = new FspExpressionEnvironment();
-        private List<FspChoice> Expand(FspChoice value)
+        private readonly FspExpressionEnvironment env = new FspExpressionEnvironment();
+        private IEnumerable<FspChoice> Expand(FspChoice value)
         {
             var result = new List<FspChoice>();
 
@@ -203,24 +207,16 @@ namespace LTSASharp.Fsp.Simplification
                         tmp = new FspChoice { Label = head, Process = c.Process };
                         var expanded2 = Expand(tmp);
 
-                        foreach (var x in expanded2)
-                        {
-                            var label = new FspFollowAction(x.Label, c.Label);
-                            var r = new FspChoice { Label = label, Process = x.Process };
-
-                            result.Add(r);
-                        }
+                        result.AddRange(from x in expanded2
+                                        let label = new FspFollowAction(x.Label, c.Label)
+                                        select new FspChoice { Label = label, Process = x.Process });
                     }
                 }
                 else
                 {
-                    foreach (var c in expanded)
-                    {
-                        var label = c.Label == null ? head : new FspFollowAction(head, c.Label);
-                        var r = new FspChoice { Label = label, Process = c.Process };
-
-                        result.Add(r);
-                    }
+                    result.AddRange(from c in expanded
+                                    let label = c.Label == null ? head : new FspFollowAction(head, c.Label)
+                                    select new FspChoice { Label = label, Process = c.Process });
                 }
 
                 return result;

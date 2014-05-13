@@ -22,7 +22,7 @@ namespace LTSASharp.Fsp.Conversion
         {
             // localProcess (Comma localProcessDefs)?;
             var parent = Check(context.localProcess().Accept(this));
-            process.Body.Add(process.Name, parent);
+            process.Body.Map(process.Name, parent);
 
             if (context.localProcessDefs() != null)
                 Check(context.localProcessDefs().Accept(this));
@@ -85,7 +85,7 @@ namespace LTSASharp.Fsp.Conversion
                 }
             }
 
-            process.Body.Add(name, local);
+            process.Body.Map(name, local);
 
             return local;
         }
