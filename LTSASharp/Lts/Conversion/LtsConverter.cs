@@ -93,12 +93,12 @@ namespace LTSASharp.Lts.Conversion
                         if (ShouldAddTransition(p, q, Tuple.Create(stateMap[s1], a, stateMap[s2])))
                             lts.Transitions.Add(new LtsAction(s1, a, s2));
             
-            var count = -1;
+            // prune unused states and transitions
+            var count = 0;
             while (lts.Transitions.Count != count)
             {
                 foreach (var transition in lts.Transitions.ToList())
                 {
-                    // prune unreachable transition
                     if (lts.InitialState == transition.Source)
                         continue;
 
@@ -111,7 +111,6 @@ namespace LTSASharp.Lts.Conversion
 
             foreach (var state in lts.States.ToList())
             {
-                // prune unreachable state
                 if (lts.InitialState == state)
                     continue;
 
