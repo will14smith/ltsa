@@ -9,6 +9,9 @@ namespace LTSASharp.Lts
 
         public LtsLabel(IFspActionLabel label)
         {
+            if (label is FspFollowAction)
+                label = ((FspFollowAction) label).MergeDown();
+
             if (!(label is FspActionName))
                 throw new InvalidOperationException();
 
