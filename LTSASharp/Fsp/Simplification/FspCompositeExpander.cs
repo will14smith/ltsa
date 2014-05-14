@@ -68,7 +68,7 @@ namespace LTSASharp.Fsp.Simplification
                     return results;
                 }
                 // Convert to relabel
-                return new FspCompositeBody[] { new FspPrefixRelabel(compLabel.Body, compLabel.Label) };
+                return new FspCompositeBody[] { new FspPrefixRelabel(compLabel.Body, Expand(compLabel.Label)) };
             }
 
             if (body is FspShareComposite)
@@ -76,10 +76,62 @@ namespace LTSASharp.Fsp.Simplification
                 var compShare = (FspShareComposite)body;
 
                 // Convert to relabel
-                return new FspCompositeBody[] {new FspPrefixRelabel(compShare.Body, compShare.Label)};
+                return new FspCompositeBody[] { new FspPrefixRelabel(compShare.Body, compShare.Label) };
+            }
+
+            if (body is FspRangeComposition)
+            {
+                // forall[i:0..2] S[i] == (S[0] || S[1] || S[2])
+                var compRange = (FspRangeComposition)body;
+
+                var results = new List<FspCompositeBody> { compRange.Body };
+
+                foreach (var range in compRange.Range)
+                {
+                    var newResults = new List<FspCompositeBody>();
+                    range.Iterate(env, i =>
+                    {
+                        foreach (var result in results)
+                        {
+                            newResults.AddRange(Expand(result));
+                        }
+                    });
+                    results = newResults;
+                }
+
+                return results;
             }
 
             throw new ArgumentException("Unexpected FspCompositeBody type", "body");
+        }
+
+        private IFspActionLabel Expand(IFspActionLabel label)
+        {
+            if (label is FspActionName)
+                return label;
+
+            if (label is FspFollowAction)
+            {
+                var follow = (FspFollowAction) label;
+
+                var head = Expand(follow.Head);
+                var tail = Expand(follow.Tail);
+
+                return new FspFollowAction(head, tail).MergeDown();
+            }
+
+            if (label is FspExpressionRange)
+            {
+                var exprLabel = (FspExpressionRange) label;
+                var expr = exprLabel.Expr.Evaluate(env);
+
+                if (expr is FspIntegerExpr)
+                    return new FspActionName(((FspIntegerExpr) expr).Value.ToString());
+
+                return new FspExpressionRange(expr);
+            }
+
+            throw new ArgumentException("Unexpected label type", "label");
         }
     }
 }

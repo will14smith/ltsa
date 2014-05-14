@@ -48,6 +48,7 @@
     <Compile Include="Fsp\Composites\FspCompositeBody.cs" />
     <Compile Include="Fsp\Composites\FspLabelComposite.cs" />
     <Compile Include="Fsp\Composites\FspMultiComposite.cs" />
+    <Compile Include="Fsp\Composites\FspRangeComposition.cs" />
     <Compile Include="Fsp\Composites\FspRefComposite.cs" />
     <Compile Include="Fsp\Composites\FspShareComposite.cs" />
     <Compile Include="Fsp\Composites\FspShareLabelComposite.cs" />

@@ -13,9 +13,8 @@ namespace LTSASharp
         static void Main(string[] args)
         {
             const string prog =
-                "RESOURCE = (acquire->release->RESOURCE)." +
-                "USER = (acquire->use->release->USER)." +
-                "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
+                "SWITCH = (on->off->SWITCH)." +
+                "||SWITCHES =(forall[i:1..3] s[i]:SWITCH).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);

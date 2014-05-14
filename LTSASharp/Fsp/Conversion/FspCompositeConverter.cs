@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LTSASharp.Fsp.Composites;
 using LTSASharp.Parsing;
 
@@ -23,8 +24,14 @@ namespace LTSASharp.Fsp.Conversion
             // ForAll ranges compositeBody  //replication
             // If expression Then compositeBody (Else compositeBody)?
 
-            
-            Unimpl(context.ForAll());
+            if (context.ForAll() != null)
+            {
+                var ranges = context.ranges().actionRange().Select(x => x.Accept(new FspRangeConverter(env)));
+                var body = context.compositeBody(0).Accept(this);
+
+                return new FspRangeComposition(ranges, body);
+            }
+
             Unimpl(context.If());
 
             Func<FspCompositeBody, FspCompositeBody> prefixFunc = c => c;
