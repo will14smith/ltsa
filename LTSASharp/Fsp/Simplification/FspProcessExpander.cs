@@ -44,38 +44,8 @@ namespace LTSASharp.Fsp.Simplification
         {
             var results = new Dictionary<string, FspLocalProcess>();
 
-            if (value.Index is FspActionRange)
+            value.Index.Iterate(env, val =>
             {
-                var range = (FspActionRange)value.Index;
-                var bounds = range.Range.GetBounds(env);
-
-                for (var i = bounds.Lower; i <= bounds.Upper; i++)
-                {
-                    env.PushVariable(range.Target, i);
-
-                    var newName = name + "." + i;
-                    if (value.Process is FspIndexedProcess)
-                    {
-                        var innerResults = ExpandIndexed(newName, (FspIndexedProcess)value.Process);
-                        foreach (var result in innerResults)
-                            results.Add(result.Key, result.Value);
-                    }
-                    else
-                    {
-                        results.Add(newName, Expand(value.Process));
-                    }
-
-                    env.PopVariable(range.Target);
-                }
-
-                return results;
-            }
-
-            if (value.Index is FspExpressionRange)
-            {
-                var range = (FspExpressionRange)value.Index;
-                var val = range.Expr.GetValue(env);
-
                 var newName = name + "." + val;
 
                 if (value.Process is FspIndexedProcess)
@@ -88,11 +58,9 @@ namespace LTSASharp.Fsp.Simplification
                 {
                     results.Add(newName, Expand(value.Process));
                 }
+            });
 
-                return results;
-            }
-
-            throw new InvalidOperationException();
+            return results;
         }
 
         private FspLocalProcess Expand(FspLocalProcess value)
@@ -194,26 +162,26 @@ namespace LTSASharp.Fsp.Simplification
                 var head = follow.Head;
                 var tail = follow.Tail;
 
-                // expand tail + proc
-                var tmp = new FspChoice { Label = tail, Process = value.Process };
-
-                var expanded = Expand(tmp);
 
                 // expand head
                 if (head is FspRange)
                 {
-                    foreach (var c in expanded)
+                    var range = (FspRange)head;
+                    range.Iterate(env, i =>
                     {
-                        tmp = new FspChoice { Label = head, Process = c.Process };
-                        var expanded2 = Expand(tmp);
+                        var expandedT = Expand(new FspChoice { Label = tail, Process = value.Process });
 
-                        result.AddRange(from x in expanded2
-                                        let label = new FspFollowAction(x.Label, c.Label)
-                                        select new FspChoice { Label = label, Process = x.Process });
-                    }
+                        IFspActionLabel headLabel = new FspActionName(i.ToString());
+                        result.AddRange(from c in expandedT
+                                        let label = c.Label == null ? headLabel : new FspFollowAction(headLabel, c.Label)
+                                        select new FspChoice { Label = label, Process = c.Process });
+                    });
                 }
                 else
                 {
+                    // expand tail + proc
+                    var expanded = Expand(new FspChoice { Label = tail, Process = value.Process });
+
                     result.AddRange(from c in expanded
                                     let label = c.Label == null ? head : new FspFollowAction(head, c.Label)
                                     select new FspChoice { Label = label, Process = c.Process });
@@ -222,35 +190,13 @@ namespace LTSASharp.Fsp.Simplification
                 return result;
             }
 
-            if (value.Label is FspActionRange)
+            if (value.Label is FspRange)
             {
-                var range = (FspActionRange)value.Label;
-                var bounds = range.Range.GetBounds(env);
+                var range = (FspRange)value.Label;
 
-                for (var i = bounds.Lower; i <= bounds.Upper; i++)
-                {
-                    env.PushVariable(range.Target, i);
-
-                    result.Add(new FspChoice { Label = new FspActionName(i.ToString()), Process = Expand(value.Process) });
-
-                    env.PopVariable(range.Target);
-                }
+                range.Iterate(env, i => result.Add(new FspChoice { Label = new FspActionName(i.ToString()), Process = Expand(value.Process) }));
 
                 return result;
-            }
-
-            if (value.Label is FspExpressionRange)
-            {
-                var range = (FspExpressionRange)value.Label;
-                var expr = range.Expr.Evaluate(env);
-
-                IFspActionLabel label;
-                if (expr is FspIntegerExpr)
-                    label = new FspActionName(((FspIntegerExpr)expr).Value.ToString());
-                else
-                    label = new FspExpressionRange(expr);
-
-                return new List<FspChoice> { new FspChoice { Label = label, Process = Expand(value.Process) } };
             }
 
             throw new NotImplementedException();

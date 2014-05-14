@@ -22,12 +22,30 @@ namespace LTSASharp.Fsp.Labels
 
         public override string ToString()
         {
-            return Target == null? Range.ToString() : Target + ":" + Range;
+            return Target == null ? Range.ToString() : Target + ":" + Range;
         }
 
         public override FspRangeBounds GetBounds(FspExpressionEnvironment env)
         {
             return Range.GetBounds(env);
+        }
+
+        public override void Iterate(FspExpressionEnvironment env, Action<int> action)
+        {
+            if (Target == null)
+            {
+                base.Iterate(env, action);
+            }
+            else
+            {
+                base.Iterate(env, i =>
+                {
+                    env.PushVariable(Target, i);
+                    action(i);
+                    env.PopVariable(Target);
+                });
+            }
+
         }
     }
 }

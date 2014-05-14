@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Labels;
 
@@ -11,6 +7,16 @@ namespace LTSASharp.Fsp.Ranges
     abstract class FspRange : IFspActionLabel
     {
         public abstract FspRangeBounds GetBounds(FspExpressionEnvironment env);
+
+        public virtual void Iterate(FspExpressionEnvironment env, Action<int> action)
+        {
+            var bounds = GetBounds(env);
+
+            for (var i = bounds.Lower; i <= bounds.Upper; i++)
+            {
+                action(i);
+            }
+        }
     }
 
     internal class FspRangeBounds

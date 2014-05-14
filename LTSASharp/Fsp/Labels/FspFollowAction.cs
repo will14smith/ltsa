@@ -29,7 +29,7 @@ namespace LTSASharp.Fsp.Labels
             return (FspFollowAction) children.Reverse().Aggregate((a,b) => new FspFollowAction(b, a));
         }
 
-        private List<IFspActionLabel> GetChildren()
+        private IEnumerable<IFspActionLabel> GetChildren()
         {
             var children = new List<IFspActionLabel>();
 

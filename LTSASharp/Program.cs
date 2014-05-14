@@ -12,9 +12,7 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "P         = S[0]," +
-                                "S[i:0..2] = (a -> S[i+1])," +
-                                "S[3]      = STOP.";
+            const string prog = "SUM = (in[a:0..2][b:0..2] -> out[a+b] -> END).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);
