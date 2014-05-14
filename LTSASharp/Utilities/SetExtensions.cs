@@ -37,5 +37,14 @@ namespace LTSASharp.Utilities
 
             return newSet;
         }
+
+        public static ISet<TItem> ToSet<TItem>(this IEnumerable<TItem> items)
+        {
+            var set = new HashSet<TItem>();
+
+            set.AddRange(items);
+
+            return set;
+        } 
     }
 }

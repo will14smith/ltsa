@@ -52,7 +52,7 @@ namespace LTSASharp.Fsp.Conversion
             Unimpl(context.hiding());
 
             process = new FspProcessExpander(process).Expand();
-            process = new FspProcessSimplifier(process).Simplify();
+            //TODO process = new FspProcessSimplifier(process).Simplify();
 
             Description.Processes.Add(process);
 

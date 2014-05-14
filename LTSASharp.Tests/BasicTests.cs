@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using LTSASharp.Lts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LTSASharp.Tests
 {
@@ -13,7 +15,11 @@ namespace LTSASharp.Tests
             var fsp = CompileFsp(prog);
             var lts = CompileLts(fsp);
 
-            //TODO make some assertions
+            AssertSystemsEquals(lts, "BUTTON");
+
+            var system = lts.Systems["BUTTON"];
+            AssertAlphabetEquals(system, "press");
+            AssertStateCountEquals(system, 4);
         }
 
         [TestMethod]
@@ -24,7 +30,11 @@ namespace LTSASharp.Tests
             var fsp = CompileFsp(prog);
             var lts = CompileLts(fsp);
 
-            //TODO make some assertions
+            AssertSystemsEquals(lts, "SWITCH");
+
+            var system = lts.Systems["SWITCH"];
+            AssertAlphabetEquals(system, "on", "off");
+            AssertStateCountEquals(system, 2);
         }
     }
 }

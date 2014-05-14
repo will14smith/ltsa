@@ -12,7 +12,7 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "SUM = (in[a:0..2][b:0..2] -> out[a+b] -> END).";
+            const string prog = "INPUTSPEED = (engineOn -> CHECKSPEED), CHECKSPEED = (speed -> CHECKSPEED |engineOff -> INPUTSPEED).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);

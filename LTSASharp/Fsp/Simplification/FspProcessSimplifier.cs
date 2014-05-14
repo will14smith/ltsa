@@ -53,10 +53,14 @@ namespace LTSASharp.Fsp.Simplification
                 if (name == process.Name)
                     return selfRef;
 
+                var inline = process.Body[name].Single();
+
                 if (top)
                     AddRewrite(name, process.Name);
+                else if (!CanInline(name, inline))
+                    return local;
 
-                return process.Body[name].Single();
+                return inline;
             }
 
             if (local is FspChoices)
@@ -77,15 +81,24 @@ namespace LTSASharp.Fsp.Simplification
             }
 
             if (local is FspChoice)
-                return Simplify((FspChoice) local);
+                return Simplify((FspChoice)local);
 
             return local;
+        }
+
+        private bool CanInline(string name, FspLocalProcess local, ISet<FspLocalProcess> visited = null)
+        {
+            visited = visited ?? new HashSet<FspLocalProcess>();
+            
+            // true iff local isn't (self or mutually) recursive
+            //TODO uncomment in FspConverter when done.
+            throw new System.NotImplementedException();
         }
 
         private FspChoice Simplify(FspChoice local)
         {
             // should p2 be simplified?
-            var p2 = local.Process;
+            var p2 = Simplify(local.Process, false);
 
             IFspActionLabel label = local.Label;
             if (local.Label is FspFollowAction)
@@ -109,6 +122,9 @@ namespace LTSASharp.Fsp.Simplification
             {
                 string newName;
                 if (!rewrite.TryGetValue(name, out newName))
+                    return name;
+
+                if (name == newName)
                     return name;
 
                 name = newName;
