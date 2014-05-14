@@ -6,7 +6,6 @@ namespace LTSASharp.Lts
     {
         public static readonly LtsState End = new LtsState(-1);
         public static int Initial = 0;
-        public static int Ref = -10;
         public static int Composite = -11;
 
         public int Number { get; private set; }
@@ -24,8 +23,6 @@ namespace LTSASharp.Lts
             {
                 case -1:
                     return "sEND";
-                case -2:
-                    return string.Format("sRef[{0}]", ((LtsRefState)this).Name);
                 default:
                     throw new InvalidOperationException();
             }

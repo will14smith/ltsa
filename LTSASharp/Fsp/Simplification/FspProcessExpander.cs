@@ -84,9 +84,7 @@ namespace LTSASharp.Fsp.Simplification
                 if (choices.Count == 1)
                     return choices[0];
 
-                var result = new FspChoices();
-                result.Children.AddRange(choices);
-                return result;
+                return new FspChoices(choices);
             }
 
             if (value is FspRefProcess)
@@ -99,7 +97,7 @@ namespace LTSASharp.Fsp.Simplification
 
                 if (newIndices.All(x => x is FspIntegerExpr))
                 {
-                    // flattern
+                    // flatten
                     var name = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
 
                     return new FspRefProcess(name);
@@ -112,7 +110,7 @@ namespace LTSASharp.Fsp.Simplification
             if (value is FspStopProcess)
                 return value;
 
-            throw new NotImplementedException();
+            throw new ArgumentException("Unexpected local process type", "value");
         }
 
         private readonly FspExpressionEnvironment env = new FspExpressionEnvironment();
@@ -169,10 +167,11 @@ namespace LTSASharp.Fsp.Simplification
                     var range = (FspRange)head;
                     range.Iterate(env, i =>
                     {
-                        var expandedT = Expand(new FspChoice { Label = tail, Process = value.Process });
+                        // expand tail + proc
+                        var expanded = Expand(new FspChoice { Label = tail, Process = value.Process });
 
                         IFspActionLabel headLabel = new FspActionName(i.ToString());
-                        result.AddRange(from c in expandedT
+                        result.AddRange(from c in expanded
                                         let label = c.Label == null ? headLabel : new FspFollowAction(headLabel, c.Label)
                                         select new FspChoice { Label = label, Process = c.Process });
                     });
@@ -199,7 +198,7 @@ namespace LTSASharp.Fsp.Simplification
                 return result;
             }
 
-            throw new NotImplementedException();
+            throw new ArgumentException("Unexpected local process type", "value");
         }
     }
 }

@@ -22,7 +22,7 @@ namespace LTSASharp.Lts
         /// </summary>
         public void Prune()
         {
-            //TODO make functional and do state renumber?
+            //TODO make functional (and do state renumber?)
 
             var count = 0;
             while (Transitions.Count != count)

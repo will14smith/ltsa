@@ -1,6 +1,5 @@
 ﻿using System;
 using LTSASharp.Fsp.Composites;
-using LTSASharp.Fsp.Processes;
 using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
@@ -10,7 +9,7 @@ namespace LTSASharp.Fsp.Conversion
         private readonly FspConverterEnvironment env;
         private readonly FspComposite composite;
 
-        private int block = 0;
+        private int block;
 
         public FspCompositeConverter(FspConverterEnvironment env, FspComposite composite)
         {
@@ -32,7 +31,7 @@ namespace LTSASharp.Fsp.Conversion
             if (context.processRef() != null)
             {
                 var result = context.processRef().Accept(this);
-                                //TODO handle prefix
+                //TODO handle prefix
 
                 if (block == 0)
                 {

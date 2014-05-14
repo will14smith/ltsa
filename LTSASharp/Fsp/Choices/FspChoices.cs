@@ -6,6 +6,10 @@ namespace LTSASharp.Fsp.Choices
 {
     internal class FspChoices : FspLocalProcess
     {
+        public FspChoices(List<FspChoice> choices)
+        {
+            Children = choices;
+        } 
         public FspChoices()
         {
             Children = new List<FspChoice>();

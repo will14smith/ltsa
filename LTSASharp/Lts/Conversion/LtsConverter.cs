@@ -126,24 +126,6 @@ namespace LTSASharp.Lts.Conversion
 
             var lts = Convert(fsp.Body[fsp.Name].Single(), fsp);
 
-            foreach (var action in lts.Transitions.ToList())
-            {
-                if (action.Action == LtsLabel.Tau)
-                    continue;
-
-                if (action.Destination.Number == LtsState.Ref)
-                {
-                    if (((LtsRefState)action.Destination).Name != fsp.Name)
-                        throw new NotImplementedException();
-
-                    var dest = lts.InitialState;
-
-                    // replace
-                    lts.Transitions.Remove(action);
-                    lts.Transitions.Add(new LtsAction(action.Source, action.Action, dest));
-                }
-            }
-
             lts.Prune();
 
             return lts;
@@ -187,8 +169,7 @@ namespace LTSASharp.Lts.Conversion
             if (process is FspEndProcess || process is FspStopProcess)
             {
                 lts.States.Add(LtsState.End);
-                //TODO lts.Transitions.Add(Tau);
-
+                // lts.Transitions.Add(Tau);
                 lts.InitialState = LtsState.End;
 
                 return lts;
@@ -210,7 +191,7 @@ namespace LTSASharp.Lts.Conversion
                 return lts;
             }
 
-            throw new NotImplementedException();
+            throw new ArgumentException("Unexpected local process type", "process");
         }
         #endregion
 

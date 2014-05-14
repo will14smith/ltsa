@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
@@ -36,23 +33,15 @@ namespace LTSASharp.Fsp.Simplification
                 current = Simplify(current, true);
             }
 
-            var references = GetReferences();
-
             foreach (var b in process.Body)
             {
                 if (b.Key == process.Name)
                     newProcess.Body.Map(process.Name, current);
-                else //TODO if(references.Contains(b.Key))
+                else
                     newProcess.Body.Add(b.Key, b.Value);
             }
 
             return newProcess;
-        }
-
-        private List<string> GetReferences()
-        {
-            //TODO Get all the reachable local processes
-            return new List<string>();
         }
 
         private FspLocalProcess Simplify(FspLocalProcess local, bool top)
@@ -95,7 +84,7 @@ namespace LTSASharp.Fsp.Simplification
 
         private FspChoice Simplify(FspChoice local)
         {
-            //TODO? var p2 = Simplify(local.Process, false);
+            // should p2 be simplified?
             var p2 = local.Process;
 
             IFspActionLabel label = local.Label;

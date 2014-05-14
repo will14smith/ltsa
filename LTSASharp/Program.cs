@@ -28,13 +28,8 @@ namespace LTSASharp
         }
         private static FspDescription CompileFsp(AntlrInputStream input)
         {
-            var listener = new DebugListener();
-
             var lexer = new FSPActualLexer(input);
-            lexer.AddErrorListener(listener);
             var parser = new FSPActualParser(new BufferedTokenStream(lexer));
-            //parser.AddParseListener(listener);
-            //parser.AddErrorListener(listener);
 
             var fspConverter = new FspConveter();
             parser.fsp_description().Accept(fspConverter);

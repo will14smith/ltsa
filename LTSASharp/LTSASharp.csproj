@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugListener.cs" />
     <Compile Include="Fsp\Composites\FspCompositeBody.cs" />
     <Compile Include="Fsp\Composites\FspMultiComposite.cs" />
     <Compile Include="Fsp\Composites\FspRefComposite.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="Fsp\Simplification\FspProcessSimplifier.cs" />
     <Compile Include="Lts\LtsCompositeState.cs" />
     <Compile Include="Lts\Conversion\LtsConverter.cs" />
-    <Compile Include="Lts\LtsRefState.cs" />
     <Compile Include="Lts\LtsDescription.cs" />
     <Compile Include="Lts\LtsAction.cs" />
     <Compile Include="Lts\LtsLabel.cs" />

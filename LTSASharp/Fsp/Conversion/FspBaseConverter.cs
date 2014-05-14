@@ -44,12 +44,14 @@ namespace LTSASharp.Fsp.Conversion
                 rule = rule.Substring(0, rule.Length - 7);
 
             if (ctx != null)
-                throw new NotImplementedException(string.Format("Unimplemented subcontext '{0}' in '{1}.{2}(...)'", rule, handler, callerName));
+                throw new InvalidOperationException(string.Format("Unimplemented subcontext '{0}' in '{1}.{2}(...)'", rule, handler, callerName));
         }
-        protected void Unimpl(ITerminalNode ctx)
+        protected void Unimpl(ITerminalNode ctx, [CallerMemberName] string callerName = "")
         {
+            var handler = GetType().Name;
+
             if (ctx != null)
-                throw new NotImplementedException();
+                throw new InvalidOperationException(string.Format("Unimplemented subcontext in '{0}.{1}(...)'", handler, callerName));
         }
     }
 
