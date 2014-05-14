@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LTSASharp.Fsp.Expressions
 {
-    class FspExpressionEnvironment
+    public class FspExpressionEnvironment
     {
         private readonly Dictionary<string, int> variables;
         private readonly Dictionary<string, Stack<int>> variableStack;

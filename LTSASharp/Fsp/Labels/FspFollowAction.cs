@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Ranges;
 
 namespace LTSASharp.Fsp.Labels
@@ -17,16 +19,21 @@ namespace LTSASharp.Fsp.Labels
 
         public override string ToString()
         {
-            return Tail is FspRange 
+            return Tail is FspRange
                 ? Head + "[" + Tail + "]"
                 : Head + "." + Tail;
+        }
+
+        public void Expand(FspExpressionEnvironment env, Action<IFspActionLabel> action)
+        {
+            Head.Expand(env, h => Tail.Expand(env, t => action(new FspFollowAction(h, t))));
         }
 
         public FspFollowAction MakeTailHeavy()
         {
             var children = GetChildren().AsQueryable();
-            
-            return (FspFollowAction) children.Reverse().Aggregate((a,b) => new FspFollowAction(b, a));
+
+            return (FspFollowAction)children.Reverse().Aggregate((a, b) => new FspFollowAction(b, a));
         }
 
         private IEnumerable<IFspActionLabel> GetChildren()
@@ -51,7 +58,7 @@ namespace LTSASharp.Fsp.Labels
             IFspActionLabel h, t;
 
             if (Head is FspFollowAction)
-                h = ((FspFollowAction) Head).MergeDown();
+                h = ((FspFollowAction)Head).MergeDown();
             else
                 h = Head;
 

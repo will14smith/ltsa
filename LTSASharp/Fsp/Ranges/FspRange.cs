@@ -17,6 +17,11 @@ namespace LTSASharp.Fsp.Ranges
                 action(i);
             }
         }
+
+        public void Expand(FspExpressionEnvironment env, Action<IFspActionLabel> action)
+        {
+            Iterate(env, i => action(new FspActionName(i.ToString())));
+        }
     }
 
     internal class FspRangeBounds
