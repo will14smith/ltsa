@@ -28,11 +28,11 @@ namespace LTSASharp.Lts.Conversion
 
             foreach (var fsp in fspDescription.Processes)
             {
-                description.Systems.Add(fsp.Name, Convert(fsp));
+                description.Systems.Add(fsp.Name, Convert(fsp).Prune());
             }
             foreach (var fsp in fspDescription.Composites)
             {
-                description.Systems.Add(fsp.Name, Convert(fsp));
+                description.Systems.Add(fsp.Name, Convert(fsp).Prune());
             }
 
             return description;
@@ -126,9 +126,6 @@ namespace LTSASharp.Lts.Conversion
                         if (ShouldAddTransition(p, q, Tuple.Create(stateMap[s1], a, stateMap[s2])))
                             lts.Transitions.Add(new LtsAction(s1, a, s2));
 
-            // prune unused states and transitions
-            lts.Prune();
-
             return lts;
         }
 
@@ -161,8 +158,6 @@ namespace LTSASharp.Lts.Conversion
             initialStates = new Dictionary<string, LtsState> { { fsp.Name, new LtsState(stateNumber) } };
 
             var lts = Convert(fsp.Body[fsp.Name].Single(), fsp);
-
-            lts.Prune();
 
             return lts;
         }

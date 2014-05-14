@@ -46,20 +46,19 @@ namespace LTSASharp.Graphical.Controls
             var stateMap = new Dictionary<LtsState, int>();
 
             int i = 1;
-            foreach (var state in system.States)
+            foreach (var state in system.States.OrderBy(x => x.Number))
             {
                 var orb = new EllipseDecorator();
 
                 orb.Width = orb.Height = size;
 
-                orb.Background = new SolidColorBrush(Colors.Cyan);
+                orb.Background = new SolidColorBrush(state == system.InitialState ? Colors.Red : Colors.Cyan);
                 orb.BorderThickness = new Thickness(2);
                 orb.BorderBrush = new SolidColorBrush(Colors.Black);
 
-                //TODO use state number
                 orb.Child = new TextBlock
                 {
-                    Text = (i - 1).ToString(),
+                    Text = state.Number.ToString(),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     FontWeight = FontWeights.Bold

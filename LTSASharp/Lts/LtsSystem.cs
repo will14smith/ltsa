@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
+using LTSASharp.Utilities;
 
 namespace LTSASharp.Lts
 {
@@ -20,33 +23,29 @@ namespace LTSASharp.Lts
         /// <summary>
         /// Remove any unreachable states and transitions from this lts
         /// </summary>
-        public void Prune()
+        public LtsSystem Prune()
         {
-            //TODO make functional (and do state renumber?)
+            // possibly need to add state renumbering?
+
+            var lts = new LtsSystem { InitialState = InitialState };
+
+            lts.States.Add(InitialState);
 
             var count = 0;
-            while (Transitions.Count != count)
+            while (count != lts.States.Count)
             {
-                foreach (var transition in Transitions.ToList())
-                {
-                    if (InitialState == transition.Source)
-                        continue;
+                count = lts.States.Count;
 
-                    if (!Transitions.Any(x => x.Destination == transition.Source))
-                        Transitions.Remove(transition);
-                }
+                var newTransitions = Transitions.Where(x => lts.States.Contains(x.Source)).ToSet();
+                var newStates = newTransitions.Select(x => x.Destination);
 
-                count = Transitions.Count;
+                lts.Transitions.AddRange(newTransitions);
+                lts.States.AddRange(newStates);
             }
 
-            foreach (var state in States.ToList())
-            {
-                if (InitialState == state)
-                    continue;
+            lts.Alphabet.AddRange(lts.Transitions.Select(x => x.Action));
 
-                if (!Transitions.Any(x => x.Destination == state))
-                    States.Remove(state);
-            }
+            return lts;
         }
     }
 }
