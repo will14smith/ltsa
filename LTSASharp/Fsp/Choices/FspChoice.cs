@@ -1,4 +1,5 @@
-﻿using LTSASharp.Fsp.Labels;
+﻿using LTSASharp.Fsp.Expressions;
+using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
 
 namespace LTSASharp.Fsp.Choices
@@ -8,6 +9,8 @@ namespace LTSASharp.Fsp.Choices
         public IFspActionLabel Label { get; set; }
         public FspLocalProcess Process { get; set; }
 
+        public FspExpression Guard { get; set; }
+ 
         public override string ToString()
         {
             return Label + " -> " + Process;

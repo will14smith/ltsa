@@ -12,13 +12,10 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string progC = "||S = a[1..3]:P.";
-            //const string progC = "||S = {a[1],a[2],a[3]}:P.";
-            //const string progC = "||S = forall[i:1..3] a[i]:P.";
-            //const string progC = "||S = forall[i:1..3] a:P/{a[i]/a}.";
-            //const string progC = "||S = (a[1]:P || a[2]:P || a[3]:P).";
-
-            var prog = "P = (on -> off -> P)." + progC;
+            const string prog = "P = (a[i:0..3] -> " +
+                                "( when i==0 x -> STOP" +
+                                "| when i!=0 y -> P" +
+                                ")).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);

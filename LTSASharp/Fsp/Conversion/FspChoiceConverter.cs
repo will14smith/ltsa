@@ -1,4 +1,5 @@
 using LTSASharp.Fsp.Choices;
+using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Processes;
 using LTSASharp.Parsing;
 
@@ -23,11 +24,15 @@ namespace LTSASharp.Fsp.Conversion
             FspChoice head = null;
             FspChoice tail = null;
 
-            Unimpl(context.guard());
+            FspExpression guard = null;
+            if (context.guard() != null)
+            {
+                guard = context.guard().expression().Accept(new FspExpressionConverter(env));
+            }
 
             foreach (var action in context.actionLabels())
             {
-                var choice = new FspChoice { Label = action.Accept(new FspLabelConverter(env)) };
+                var choice = new FspChoice { Label = action.Accept(new FspLabelConverter(env)), Guard = guard };
 
                 if (tail == null)
                 {

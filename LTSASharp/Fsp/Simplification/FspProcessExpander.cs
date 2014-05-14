@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Labels;
@@ -118,10 +119,11 @@ namespace LTSASharp.Fsp.Simplification
         {
             var result = new List<FspChoice>();
 
-            //TODO guard evaluation
-
             value.Label.Expand(env, label =>
             {
+                if (value.Guard != null && value.Guard.GetValue(env) == 0)
+                    return;
+
                 var choice = new FspChoice
                 {
                     Label = label,

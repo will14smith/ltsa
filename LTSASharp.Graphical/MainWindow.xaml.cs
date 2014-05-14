@@ -33,9 +33,13 @@ namespace LTSASharp.Graphical
             //    "RESOURCE = (acquire->release->RESOURCE)." +
             //    "USER = (acquire->use->release->USER)." +
             //    "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
-            const string prog =
-                "SWITCH = (on->off->SWITCH)." +
-                "||SWITCHES =(forall[i:1..3] s[i]:SWITCH).";
+            //const string prog =
+            //    "SWITCH = (on->off->SWITCH)." +
+            //    "||SWITCHES =(forall[i:1..3] s[i]:SWITCH).";
+            const string prog = "P = (a[i:0..3] -> " +
+                    "( when i==0 x -> STOP" +
+                    "| when i!=0 y -> P" +
+                    ")).";
 
             Machine.FspDescription = prog;
         }
