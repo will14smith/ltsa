@@ -71,7 +71,7 @@ namespace LTSASharp.Fsp.Conversion
                 }
                 foreach (var t in context.indexRanges().actionRange())
                 {
-                    var index = t.range().Accept(new FspRangeConverter(env));
+                    var index = t.Accept(new FspRangeConverter(env));
 
                     local = new FspIndexedProcess(local, index);
                 }

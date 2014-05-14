@@ -12,9 +12,7 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog =
-                "SWITCH = (on->off->SWITCH)." +
-                "||SWITCHES =(forall[i:1..3] s[i]:SWITCH).";
+            const string prog = "SUM = (in[a:0..2][b:0..2] -> TOTAL[a+b]), TOTAL[s:0..4] = (out[s] -> SUM).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);
