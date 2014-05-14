@@ -43,15 +43,7 @@ namespace LTSASharp.Fsp.Conversion
                 }
                 else if (t.actionRange() != null)
                 {
-                    var range = t.actionRange().range() != null
-                        ? t.actionRange().range().Accept(new FspRangeConverter(env))
-                        : t.actionRange().set().Accept(new FspRangeConverter(env));
-
-                    var name = t.actionRange().LowerCaseIdentifier();
-
-                    tail = name != null
-                        ? new FspActionRange(name.GetText(), range)
-                        : new FspActionRange(range);
+                    tail = t.actionRange().Accept(new FspRangeConverter(env));
                 }
                 else if (t.expression() != null)
                 {
@@ -61,7 +53,7 @@ namespace LTSASharp.Fsp.Conversion
                 }
 
                 Unimpl(t.set());
-               
+
                 head = new FspFollowAction(head, tail);
             }
 

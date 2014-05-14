@@ -1,4 +1,5 @@
-﻿using LTSASharp.Fsp.Ranges;
+﻿using LTSASharp.Fsp.Labels;
+using LTSASharp.Fsp.Ranges;
 using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
@@ -10,6 +11,19 @@ namespace LTSASharp.Fsp.Conversion
         public FspRangeConverter(FspConverterEnvironment env)
         {
             this.env = env;
+        }
+
+        public override FspRange VisitActionRange(FSPActualParser.ActionRangeContext context)
+        {
+            var range = context.range() != null
+                ? context.range().Accept(this)
+                : context.set().Accept(this);
+
+            var name = context.LowerCaseIdentifier();
+
+            return name != null
+                ? new FspActionRange(name.GetText(), range)
+                : new FspActionRange(range);
         }
 
         public override FspRange VisitRange(FSPActualParser.RangeContext context)
