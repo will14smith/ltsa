@@ -5,6 +5,7 @@ using Antlr4.Runtime.Misc;
 using LTSASharp.Fsp;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Composites;
+using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
 using LTSASharp.Utilities;
 
@@ -53,10 +54,10 @@ namespace LTSASharp.Lts.Conversion
                 //TODO clone?
                 return description.Systems[((FspRefComposite)composite).Name];
             }
-            
+
             if (composite is FspPrefixRelabel)
             {
-                var relabel = (FspPrefixRelabel) composite;
+                var relabel = (FspPrefixRelabel)composite;
                 var lts = Convert(relabel.Body);
 
                 var relabelMap = new MultiMap<LtsLabel, LtsLabel>();
@@ -68,13 +69,27 @@ namespace LTSASharp.Lts.Conversion
 
                 foreach (var label in lts.Alphabet)
                 {
-                    relabelMap.Map(label, new LtsLabel(relabel.Label + "." + label.Name));
+                    BuildMap(label, relabel.Label, relabelMap);
                 }
 
                 return new LtsRelabeler(relabelMap).Relabel(lts);
             }
 
             throw new InvalidOperationException();
+        }
+
+        private void BuildMap(LtsLabel name, IFspActionLabel label, MultiMap<LtsLabel, LtsLabel> relabelMap)
+        {
+            if (label is FspActionName)
+                relabelMap.Map(name, new LtsLabel(((FspActionName)label).Name + "." + name.Name));
+            else if (label is FspActionSet)
+            {
+                var set = ((FspActionSet)label).Items;
+                foreach (var item in set)
+                    BuildMap(name, item, relabelMap);
+            }
+            else
+                throw new InvalidOperationException();
         }
 
         private LtsSystem MergeComposites(LtsSystem p, LtsSystem q)

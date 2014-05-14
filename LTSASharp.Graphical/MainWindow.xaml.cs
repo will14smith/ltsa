@@ -27,8 +27,12 @@ namespace LTSASharp.Graphical
             //                    "MAKE_B   = (makeB->ready->used->MAKE_B)." +
             //                    "ASSEMBLE = (ready->assemble->used->ASSEMBLE)." +
             //                    "||FACTORY = (MAKE_A || MAKE_B || ASSEMBLE).";
-            const string prog = "SWITCH = (on->off->SWITCH).\n" +
-                                "||TWO_SWITCH = (a:SWITCH || b:SWITCH).";
+            //const string prog = "SWITCH = (on->off->SWITCH).\n" +
+            //                    "||TWO_SWITCH = (a:SWITCH || b:SWITCH).";
+            const string prog =
+    "RESOURCE = (acquire->release->RESOURCE)." +
+    "USER = (acquire->use->release->USER)." +
+    "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
 
             Machine.FspDescription = prog;
         }

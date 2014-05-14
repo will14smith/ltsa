@@ -76,8 +76,7 @@ namespace LTSASharp.Fsp.Simplification
                 var compShare = (FspShareComposite)body;
 
                 // Convert to relabel
-
-                throw new NotImplementedException();
+                return new FspCompositeBody[] {new FspPrefixRelabel(compShare.Body, compShare.Label)};
             }
 
             throw new ArgumentException("Unexpected FspCompositeBody type", "body");
