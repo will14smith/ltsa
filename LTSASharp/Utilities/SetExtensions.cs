@@ -40,11 +40,14 @@ namespace LTSASharp.Utilities
 
         public static ISet<TItem> ToSet<TItem>(this IEnumerable<TItem> items)
         {
+            if (items is ISet<TItem>)
+                return ((ISet<TItem>)items).Clone();
+
             var set = new HashSet<TItem>();
 
             set.AddRange(items);
 
             return set;
-        } 
+        }
     }
 }

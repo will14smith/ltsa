@@ -32,6 +32,26 @@ namespace LTSASharp.Fsp.Conversion
                     return false;
             }
 
+            // Have to have a full model for correct expansion
+            var actualDescription = new FspDescription();
+
+            foreach (var p in Description.Processes)
+            {
+                var process = new FspProcessExpander(p).Expand();
+                //TODO process = new FspProcessSimplifier(process).Simplify();
+
+                actualDescription.Processes.Add(process);
+            }   
+            
+            foreach (var c in Description.Composites)
+            {
+                var composite = new FspCompositeExpander(c, Description).Expand();
+
+                actualDescription.Composites.Add(composite);
+            }
+
+            Description = actualDescription;
+
             return true;
         }
 
@@ -50,9 +70,6 @@ namespace LTSASharp.Fsp.Conversion
             Unimpl(context.alphabetExtension());
             Unimpl(context.relabel());
             Unimpl(context.hiding());
-
-            process = new FspProcessExpander(process).Expand();
-            //TODO process = new FspProcessSimplifier(process).Simplify();
 
             Description.Processes.Add(process);
 
@@ -73,7 +90,7 @@ namespace LTSASharp.Fsp.Conversion
 
             Unimpl(context.priority());
             Unimpl(context.hiding());
-
+            
             Description.Composites.Add(composite);
 
             return true;

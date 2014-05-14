@@ -89,5 +89,19 @@ namespace LTSASharp.Tests
         {
             Assert.AreEqual(expectedCount, lts.States.Count);
         }
+
+        protected void AssertLtsEqual(LtsDescription a, LtsDescription b)
+        {
+            AssertSystemsEquals(b, a.Systems.Keys.ToArray());
+            foreach (var s in a.Systems)
+            {
+                var ab = s.Value;
+                var lb = b.Systems[s.Key];
+
+                AssertStateCountEquals(lb, ab.States.Count);
+                AssertAlphabetEquals(lb, ab.Alphabet.Select(x => x.Name).ToArray());
+                //TODO transitions
+            }
+        }
     }
 }
