@@ -20,13 +20,40 @@ namespace LTSASharp.Fsp.Conversion
         public override FspCompositeBody VisitCompositeBody(FSPActualParser.CompositeBodyContext context)
         {
             // prefixLabel? (processRef | LRound parallelComposition RRound) relabel?
-            // prefixLabel?  relabel?
             // ForAll ranges compositeBody  //replication
             // If expression Then compositeBody (Else compositeBody)?
 
-            Unimpl(context.prefixLabel());
+            
             Unimpl(context.ForAll());
             Unimpl(context.If());
+
+            Func<FspCompositeBody, FspCompositeBody> prefixFunc = c => c;
+
+            var prefix = context.prefixLabel();
+            if (prefix != null)
+            {
+                var label1 = prefix.actionLabels(0).Accept(new FspLabelConverter(env));
+                if (prefix.ColonColon() != null)
+                {
+                    var al2 = prefix.actionLabels(1);
+                    if (al2 != null)
+                    {
+                        // ActionLabels :: ActionLabel :
+                        var label2 = al2.Accept(new FspLabelConverter(env));
+                        prefixFunc = c => new FspShareLabelComposite(c, label1, label2);
+                    }
+                    else
+                    {
+                        // ActionLabels ::
+                        prefixFunc = c => new FspShareComposite(c, label1);
+                    }
+                }
+                else
+                {
+                    // ActionLabels :
+                    prefixFunc = c => new FspLabelComposite(c, label1);
+                }
+            }
 
             if (context.processRef() != null)
             {
@@ -35,10 +62,10 @@ namespace LTSASharp.Fsp.Conversion
 
                 if (block == 0)
                 {
-                    composite.Body.Add(result);
+                    composite.Body.Add(prefixFunc(result));
                 }
 
-                return result;
+                return prefixFunc(result);
             }
 
             if (context.parallelComposition() != null)
@@ -49,10 +76,10 @@ namespace LTSASharp.Fsp.Conversion
                 if (block == 0)
                 {
                     foreach (var c in result.Composites)
-                        composite.Body.Add(c);
+                        composite.Body.Add(prefixFunc(c));
                 }
 
-                return result;
+                return prefixFunc(result);
             }
 
 

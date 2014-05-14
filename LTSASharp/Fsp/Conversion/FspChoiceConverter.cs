@@ -27,7 +27,7 @@ namespace LTSASharp.Fsp.Conversion
 
             foreach (var action in context.actionLabels())
             {
-                var choice = new FspChoice { Label = action.Accept(new FspLabelConverter(env, process, choices, head)) };
+                var choice = new FspChoice { Label = action.Accept(new FspLabelConverter(env)) };
 
                 if (tail == null)
                 {

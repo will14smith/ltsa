@@ -46,8 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fsp\Composites\FspCompositeBody.cs" />
+    <Compile Include="Fsp\Composites\FspLabelComposite.cs" />
     <Compile Include="Fsp\Composites\FspMultiComposite.cs" />
     <Compile Include="Fsp\Composites\FspRefComposite.cs" />
+    <Compile Include="Fsp\Composites\FspShareComposite.cs" />
+    <Compile Include="Fsp\Composites\FspShareLabelComposite.cs" />
     <Compile Include="Fsp\Conversion\FspBaseConverter.cs" />
     <Compile Include="Fsp\Conversion\FspChoiceConverter.cs" />
     <Compile Include="Fsp\Conversion\FspCompositeConverter.cs" />
@@ -104,8 +107,12 @@
     <Compile Include="Fsp\Ranges\FspExpressionRange.cs" />
     <Compile Include="Fsp\Ranges\FspRange.cs" />
     <Compile Include="Fsp\Ranges\FspRefRange.cs" />
+    <Compile Include="Fsp\Composites\FspPrefixRelabel.cs" />
+    <Compile Include="Fsp\Relabelling\FspRelabel.cs" />
+    <Compile Include="Fsp\Simplification\FspCompositeExpander.cs" />
     <Compile Include="Fsp\Simplification\FspProcessExpander.cs" />
     <Compile Include="Fsp\Simplification\FspProcessSimplifier.cs" />
+    <Compile Include="Lts\Conversion\LtsRelabeler.cs" />
     <Compile Include="Lts\LtsCompositeState.cs" />
     <Compile Include="Lts\Conversion\LtsConverter.cs" />
     <Compile Include="Lts\LtsDescription.cs" />

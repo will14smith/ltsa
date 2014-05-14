@@ -1,8 +1,5 @@
 using System;
-using Antlr4.Runtime.Tree;
-using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Labels;
-using LTSASharp.Fsp.Processes;
 using LTSASharp.Fsp.Ranges;
 using LTSASharp.Parsing;
 
@@ -11,16 +8,10 @@ namespace LTSASharp.Fsp.Conversion
     internal class FspLabelConverter : FspBaseConverter<IFspActionLabel>
     {
         private readonly FspConverterEnvironment env;
-        private readonly FspProcess process;
-        private readonly FspChoices choices;
-        private readonly FspChoice choice;
 
-        public FspLabelConverter(FspConverterEnvironment env, FspProcess process, FspChoices choices, FspChoice choice)
+        public FspLabelConverter(FspConverterEnvironment env)
         {
             this.env = env;
-            this.process = process;
-            this.choices = choices;
-            this.choice = choice;
         }
 
         public override IFspActionLabel VisitActionLabels(FSPActualParser.ActionLabelsContext context)

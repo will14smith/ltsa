@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime.Misc;
 using LTSASharp.Fsp;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Composites;
@@ -51,6 +52,26 @@ namespace LTSASharp.Lts.Conversion
             {
                 //TODO clone?
                 return description.Systems[((FspRefComposite)composite).Name];
+            }
+            
+            if (composite is FspPrefixRelabel)
+            {
+                var relabel = (FspPrefixRelabel) composite;
+                var lts = Convert(relabel.Body);
+
+                var relabelMap = new MultiMap<LtsLabel, LtsLabel>();
+
+                // Given:
+                //     USER = (acquire->use->release->USER).
+                //
+                // a:USER == USER/{a.acquire/acquire, a.use/use, a.release/release}
+
+                foreach (var label in lts.Alphabet)
+                {
+                    relabelMap.Map(label, new LtsLabel(relabel.Label + "." + label.Name));
+                }
+
+                return new LtsRelabeler(relabelMap).Relabel(lts);
             }
 
             throw new InvalidOperationException();

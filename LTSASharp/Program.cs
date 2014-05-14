@@ -12,7 +12,10 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "INPUTSPEED = (engineOn -> CHECKSPEED), CHECKSPEED = (speed -> CHECKSPEED |engineOff -> INPUTSPEED).";
+            const string prog =
+                "RESOURCE = (acquire->release->RESOURCE)." +
+                "USER = (acquire->use->release->USER)." +
+                "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
 
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);
