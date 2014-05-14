@@ -45,7 +45,7 @@ namespace LTSASharp.Fsp.Conversion
             
             foreach (var c in Description.Composites)
             {
-                var composite = new FspCompositeExpander(c, Description).Expand();
+                var composite = new FspCompositeExpander(c).Expand();
 
                 actualDescription.Composites.Add(composite);
             }

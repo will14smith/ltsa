@@ -5,20 +5,17 @@ using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Ranges;
-using LTSASharp.Fsp.Relabelling;
 
 namespace LTSASharp.Fsp.Simplification
 {
     class FspCompositeExpander
     {
         private readonly FspComposite composite;
-        private readonly FspDescription description;
         private FspExpressionEnvironment env;
 
-        public FspCompositeExpander(FspComposite composite, FspDescription description)
+        public FspCompositeExpander(FspComposite composite)
         {
             this.composite = composite;
-            this.description = description;
         }
 
         public FspComposite Expand()
@@ -60,15 +57,17 @@ namespace LTSASharp.Fsp.Simplification
                 {
                     var range = (FspRange)compLabel.Label;
                     range.Iterate(env, i =>
-                    {
-                        var inner = new FspLabelComposite(compLabel.Body, new FspActionName(i.ToString()));
-                        results.AddRange(Expand(inner));
-                    });
+                                       {
+                                           var inner = new FspLabelComposite(compLabel.Body, new FspActionName(i.ToString()));
+                                           results.AddRange(Expand(inner));
+                                       });
 
                     return results;
                 }
                 // Convert to relabel
-                return new FspCompositeBody[] { new FspPrefixRelabel(compLabel.Body, Expand(compLabel.Label)) };
+                compLabel.Label.Expand(env, label => results.Add(new FspPrefixRelabel(compLabel.Body, label)));
+
+                return results;
             }
 
             if (body is FspShareComposite)
@@ -103,35 +102,6 @@ namespace LTSASharp.Fsp.Simplification
             }
 
             throw new ArgumentException("Unexpected FspCompositeBody type", "body");
-        }
-
-        private IFspActionLabel Expand(IFspActionLabel label)
-        {
-            if (label is FspActionName)
-                return label;
-
-            if (label is FspFollowAction)
-            {
-                var follow = (FspFollowAction) label;
-
-                var head = Expand(follow.Head);
-                var tail = Expand(follow.Tail);
-
-                return new FspFollowAction(head, tail).MergeDown();
-            }
-
-            if (label is FspExpressionRange)
-            {
-                var exprLabel = (FspExpressionRange) label;
-                var expr = exprLabel.Expr.Evaluate(env);
-
-                if (expr is FspIntegerExpr)
-                    return new FspActionName(((FspIntegerExpr) expr).Value.ToString());
-
-                return new FspExpressionRange(expr);
-            }
-
-            throw new ArgumentException("Unexpected label type", "label");
         }
     }
 }

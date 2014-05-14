@@ -118,87 +118,20 @@ namespace LTSASharp.Fsp.Simplification
         {
             var result = new List<FspChoice>();
 
-            // set expansion
-            // range expansion (including guard evaluation)
+            //TODO guard evaluation
 
-            if (value.Label is FspActionName)
+            value.Label.Expand(env, label =>
             {
                 var choice = new FspChoice
                 {
-                    Label = value.Label,
+                    Label = label,
                     Process = Expand(value.Process)
                 };
 
                 result.Add(choice);
+            });
 
-                return result;
-            }
-
-            if (value.Label is FspActionSet)
-            {
-                var items = ((FspActionSet)value.Label).Items;
-
-                foreach (var item in items)
-                {
-                    var choice = new FspChoice
-                    {
-                        Label = item,
-                        Process = Expand(value.Process)
-                    };
-
-                    result.AddRange(Expand(choice));
-                }
-
-                return result;
-            }
-
-            if (value.Label is FspFollowAction)
-            {
-                var follow = (FspFollowAction)value.Label;
-                follow = follow.MakeTailHeavy();
-
-                var head = follow.Head;
-                var tail = follow.Tail;
-
-
-                // expand head
-                if (head is FspRange)
-                {
-                    var range = (FspRange)head;
-                    range.Iterate(env, i =>
-                    {
-                        // expand tail + proc
-                        var expanded = Expand(new FspChoice { Label = tail, Process = value.Process });
-
-                        IFspActionLabel headLabel = new FspActionName(i.ToString());
-                        result.AddRange(from c in expanded
-                                        let label = c.Label == null ? headLabel : new FspFollowAction(headLabel, c.Label)
-                                        select new FspChoice { Label = label, Process = c.Process });
-                    });
-                }
-                else
-                {
-                    // expand tail + proc
-                    var expanded = Expand(new FspChoice { Label = tail, Process = value.Process });
-
-                    result.AddRange(from c in expanded
-                                    let label = c.Label == null ? head : new FspFollowAction(head, c.Label)
-                                    select new FspChoice { Label = label, Process = c.Process });
-                }
-
-                return result;
-            }
-
-            if (value.Label is FspRange)
-            {
-                var range = (FspRange)value.Label;
-
-                range.Iterate(env, i => result.Add(new FspChoice { Label = new FspActionName(i.ToString()), Process = Expand(value.Process) }));
-
-                return result;
-            }
-
-            throw new ArgumentException("Unexpected local process type", "value");
+            return result;
         }
     }
 }

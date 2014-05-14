@@ -26,7 +26,7 @@ namespace LTSASharp.Fsp.Labels
 
         public void Expand(FspExpressionEnvironment env, Action<IFspActionLabel> action)
         {
-            Head.Expand(env, h => Tail.Expand(env, t => action(new FspFollowAction(h, t))));
+            Head.Expand(env, h => Tail.Expand(env, t => action(new FspFollowAction(h, t).MergeDown())));
         }
 
         public FspFollowAction MakeTailHeavy()
