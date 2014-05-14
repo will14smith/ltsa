@@ -27,9 +27,17 @@ namespace LTSASharp.Fsp.Conversion
             if (context.ForAll() != null)
             {
                 var ranges = context.ranges().actionRange().Select(x => x.Accept(new FspRangeConverter(env)));
-                var body = context.compositeBody(0).Accept(this);
 
-                return new FspRangeComposition(ranges, body);
+                block++;
+                var body = context.compositeBody(0).Accept(this);
+                block--;
+
+                var result = new FspRangeComposition(ranges, body);
+
+                if (block == 0)
+                    composite.Body.Add(result);
+
+                return result;
             }
 
             Unimpl(context.If());
@@ -65,7 +73,6 @@ namespace LTSASharp.Fsp.Conversion
             if (context.processRef() != null)
             {
                 var result = context.processRef().Accept(this);
-                //TODO handle prefix
 
                 if (block == 0)
                 {
@@ -78,7 +85,6 @@ namespace LTSASharp.Fsp.Conversion
             if (context.parallelComposition() != null)
             {
                 var result = (FspMultiComposite)context.parallelComposition().Accept(this);
-                //TODO handle prefix
 
                 if (block == 0)
                 {

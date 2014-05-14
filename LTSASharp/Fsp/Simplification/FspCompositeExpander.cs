@@ -56,9 +56,9 @@ namespace LTSASharp.Fsp.Simplification
                 if (compLabel.Label is FspRange)
                 {
                     var range = (FspRange)compLabel.Label;
-                    range.Iterate(env, i =>
+                    range.Expand(env, label =>
                                        {
-                                           var inner = new FspLabelComposite(compLabel.Body, new FspActionName(i.ToString()));
+                                           var inner = new FspLabelComposite(compLabel.Body, label);
                                            results.AddRange(Expand(inner));
                                        });
 

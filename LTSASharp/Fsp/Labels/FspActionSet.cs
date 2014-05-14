@@ -23,7 +23,7 @@ namespace LTSASharp.Fsp.Labels
         {
             foreach (var item in Items)
             {
-                action(item);
+                item.Expand(env, action);
             }
         }
     }
