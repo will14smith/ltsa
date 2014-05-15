@@ -52,10 +52,6 @@ namespace LTSASharp
             {
                 Console.WriteLine(p);
             }
-            foreach (var c in fspConverter.Description.Composites)
-            {
-                Console.WriteLine(c);
-            }
             Console.WriteLine();
 
             return fspConverter.Description;

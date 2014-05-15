@@ -8,11 +8,9 @@ namespace LTSASharp.Fsp
     {
         public FspDescription()
         {
-            Processes = new List<FspProcess>();
-            Composites = new List<FspComposite>();
+            Processes = new Dictionary<string, FspBaseProcess>();
         }
 
-        public List<FspProcess> Processes { get; private set; }
-        public List<FspComposite> Composites { get; private set; } 
+        public Dictionary<string, FspBaseProcess> Processes { get; private set; }
     }
 }

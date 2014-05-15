@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Antlr4.Runtime.Misc;
 
 namespace LTSASharp.Fsp.Processes
 {
-    public class FspProcess
+    public class FspProcess : FspBaseProcess
     {
         public FspProcess()
         {
             Body = new MultiMap<string, FspLocalProcess>();
-            Parameters = new List<FspParameter>();
         }
 
-        public string Name { get; set; }
         public MultiMap<string, FspLocalProcess> Body { get; private set; }
-        public List<FspParameter> Parameters { get; private set; }
 
         // Alphabet ext
         // Relabl 

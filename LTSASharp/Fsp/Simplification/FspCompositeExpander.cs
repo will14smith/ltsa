@@ -7,7 +7,7 @@ using LTSASharp.Fsp.Ranges;
 
 namespace LTSASharp.Fsp.Simplification
 {
-    class FspCompositeExpander
+    class FspCompositeExpander : IFspExpander<FspComposite>
     {
         private readonly FspComposite composite;
 
@@ -33,6 +33,16 @@ namespace LTSASharp.Fsp.Simplification
                 name += "." + value;
                 env.PushVariable(param.Name, value);
             }
+        }
+
+        public FspCompositeExpander(FspComposite composite, string name, FspExpressionEnvironment env, FspDescription oldDesc, FspDescription newDesc)
+        {
+            this.composite = composite;
+            this.oldDesc = oldDesc;
+            this.newDesc = newDesc;
+
+            this.env = env;
+            this.name = name;
         }
 
         public FspComposite Expand()
@@ -69,18 +79,19 @@ namespace LTSASharp.Fsp.Simplification
                 var newRef = compRef.Arguments.Aggregate(compRef.Name, (n, arg) => n + ("." + arg.GetValue(env)));
 
                 //TODO might be comp not proc...
-                var expandedProc = newDesc.Processes.SingleOrDefault(x => x.Name == newRef);
-                if (expandedProc == null)
+                if (!newDesc.Processes.ContainsKey(newRef))
                 {
-                    var paramProc = oldDesc.Processes.Single(x => x.Name == compRef.Name && x.Parameters.Count == compRef.Arguments.Count);
+                    var paramProc = oldDesc.Processes[compRef.Name];
 
                     // populate arguments
                     var paramEnv = new FspExpressionEnvironment();
                     for (int i = 0; i < paramProc.Parameters.Count; i++)
                         paramEnv.PushVariable(paramProc.Parameters[i].Name, compRef.Arguments[i].GetValue(env));
 
+                    var expander = FspExpanderFactory.GetExpander(paramProc, newRef, paramEnv, oldDesc, newDesc);
+
                     // add expanded ref'd process to description
-                    newDesc.Processes.Add(new FspProcessExpander(paramProc, newRef, paramEnv).Expand());
+                    newDesc.Processes.Add(newRef, expander.Expand());
                 }
 
                 // return ref to expanded process

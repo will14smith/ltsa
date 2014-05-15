@@ -8,6 +8,7 @@ using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
 using LTSASharp.Utilities;
+using FspBaseProcess = LTSASharp.Fsp.FspBaseProcess;
 
 namespace LTSASharp.Lts.Conversion
 {
@@ -28,14 +29,21 @@ namespace LTSASharp.Lts.Conversion
 
             foreach (var fsp in fspDescription.Processes)
             {
-                description.Systems.Add(fsp.Name, Convert(fsp).Prune());
-            }
-            foreach (var fsp in fspDescription.Composites)
-            {
-                description.Systems.Add(fsp.Name, Convert(fsp).Prune());
+                description.Systems.Add(fsp.Key, Convert(fsp.Value).Prune());
             }
 
             return description;
+        }
+
+        private LtsSystem Convert(FspBaseProcess process)
+        {
+            if (process is FspProcess)
+                return Convert((FspProcess) process);
+
+            if (process is FspComposite)
+                return Convert((FspComposite)process);
+
+            throw new ArgumentException("Unexpected process type", "process");
         }
 
         #region Composities

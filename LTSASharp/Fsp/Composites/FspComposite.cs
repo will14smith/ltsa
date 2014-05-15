@@ -3,17 +3,14 @@ using System.Linq;
 
 namespace LTSASharp.Fsp.Composites
 {
-    public class FspComposite
+    public class FspComposite : FspBaseProcess
     {
         public FspComposite()
         {
             Body = new List<FspCompositeBody>();
-            Parameters = new List<FspParameter>();
         }
 
-        public string Name { get; set; }
         public List<FspCompositeBody> Body { get; private set; }
-        public List<FspParameter> Parameters { get; private set; }
 
         // Relabel
         // Prio

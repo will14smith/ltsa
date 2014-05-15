@@ -8,7 +8,7 @@ using LTSASharp.Fsp.Processes;
 
 namespace LTSASharp.Fsp.Simplification
 {
-    class FspProcessExpander
+    class FspProcessExpander : IFspExpander<FspProcess>
     {
         private readonly FspProcess process;
         private readonly string name;

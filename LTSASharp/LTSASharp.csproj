@@ -85,6 +85,7 @@
     <Compile Include="Fsp\Expressions\FspRightShiftExpr.cs" />
     <Compile Include="Fsp\Expressions\FspVariableExpr.cs" />
     <Compile Include="Fsp\FspDescription.cs" />
+    <Compile Include="Fsp\FspBaseProcess.cs" />
     <Compile Include="Fsp\Labels\FspActionRange.cs" />
     <Compile Include="Fsp\Labels\FspActionSet.cs" />
     <Compile Include="Fsp\Processes\FspBaseLocalProcess.cs" />
@@ -112,8 +113,10 @@
     <Compile Include="Fsp\Composites\FspPrefixRelabel.cs" />
     <Compile Include="Fsp\Relabelling\FspRelabel.cs" />
     <Compile Include="Fsp\Simplification\FspCompositeExpander.cs" />
+    <Compile Include="Fsp\Simplification\FspExpanderFactory.cs" />
     <Compile Include="Fsp\Simplification\FspProcessExpander.cs" />
     <Compile Include="Fsp\Simplification\FspProcessSimplifier.cs" />
+    <Compile Include="Fsp\Simplification\IFspExpander.cs" />
     <Compile Include="Lts\Conversion\LtsRelabeler.cs" />
     <Compile Include="Lts\LtsCompositeState.cs" />
     <Compile Include="Lts\Conversion\LtsConverter.cs" />
