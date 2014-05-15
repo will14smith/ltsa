@@ -1,6 +1,6 @@
 ﻿namespace LTSASharp.Fsp.Processes
 {
-    internal class FspErrorProcess : FspBaseProcess
+    internal class FspErrorProcess : FspBaseLocalProcess
     {
     }
 }

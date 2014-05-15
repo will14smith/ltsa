@@ -1,6 +1,6 @@
 ﻿namespace LTSASharp.Fsp.Processes
 {
-    internal class FspEndProcess : FspBaseProcess
+    internal class FspEndProcess : FspBaseLocalProcess
     {
         public override string ToString()
         {

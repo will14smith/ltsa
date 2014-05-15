@@ -5,7 +5,7 @@ using LTSASharp.Fsp.Expressions;
 
 namespace LTSASharp.Fsp.Processes
 {
-    internal class FspRefProcess : FspBaseProcess
+    internal class FspRefProcess : FspBaseLocalProcess
     {
         public string Name { get; private set; }
         public List<FspExpression> Indices { get; private set; }

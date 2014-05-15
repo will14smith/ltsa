@@ -87,7 +87,7 @@
     <Compile Include="Fsp\FspDescription.cs" />
     <Compile Include="Fsp\Labels\FspActionRange.cs" />
     <Compile Include="Fsp\Labels\FspActionSet.cs" />
-    <Compile Include="Fsp\Processes\FspBaseProcess.cs" />
+    <Compile Include="Fsp\Processes\FspBaseLocalProcess.cs" />
     <Compile Include="Fsp\Choices\FspChoice.cs" />
     <Compile Include="Fsp\Choices\FspChoices.cs" />
     <Compile Include="Fsp\Conversion\FspConveter.cs" />
