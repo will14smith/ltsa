@@ -2,7 +2,7 @@
 
 namespace LTSASharp.Fsp.Expressions
 {
-    abstract class FspExpression
+    public abstract class FspExpression
     {
         public abstract FspExpression Evaluate(FspExpressionEnvironment env);
 

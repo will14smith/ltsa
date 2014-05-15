@@ -41,11 +41,11 @@ namespace LTSASharp.Fsp.Conversion
                 //TODO process = new FspProcessSimplifier(process).Simplify();
 
                 actualDescription.Processes.Add(process);
-            }   
-            
+            }
+
             foreach (var c in Description.Composites)
             {
-                var composite = new FspCompositeExpander(c).Expand();
+                var composite = new FspCompositeExpander(c, Description, actualDescription).Expand();
 
                 actualDescription.Composites.Add(composite);
             }
@@ -63,7 +63,17 @@ namespace LTSASharp.Fsp.Conversion
             var body = context.processBody();
 
             process.Name = name.GetText();
-            Unimpl(context.param());
+
+            if (context.param() != null)
+            {
+                foreach (var paramCtx in context.param().parameterList().parameter())
+                {
+                    var paramName = paramCtx.UpperCaseIdentifier().GetText();
+                    var paramDefault = paramCtx.expression().Accept(new FspExpressionConverter(env));
+
+                    process.Parameters.Add(new FspParameter(paramName, paramDefault));
+                }
+            }
 
             Check(body.Accept(new FspProcessConverter(env, process)));
 
@@ -82,6 +92,18 @@ namespace LTSASharp.Fsp.Conversion
             var composite = new FspComposite();
 
             var name = context.UpperCaseIdentifier();
+
+            if (context.param() != null)
+            {
+                foreach (var paramCtx in context.param().parameterList().parameter())
+                {
+                    var paramName = paramCtx.UpperCaseIdentifier().GetText();
+                    var paramDefault = paramCtx.expression().Accept(new FspExpressionConverter(env));
+
+                    composite.Parameters.Add(new FspParameter(paramName, paramDefault));
+                }
+            }
+
             var body = context.compositeBody();
 
             composite.Name = name.GetText();
@@ -90,7 +112,7 @@ namespace LTSASharp.Fsp.Conversion
 
             Unimpl(context.priority());
             Unimpl(context.hiding());
-            
+
             Description.Composites.Add(composite);
 
             return true;

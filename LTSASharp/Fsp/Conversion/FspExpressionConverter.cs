@@ -226,7 +226,12 @@ namespace LTSASharp.Fsp.Conversion
                 return new FspVariableExpr(context.LowerCaseIdentifier().GetText());
             }
 
-            Unimpl(context.UpperCaseIdentifier());
+            if (context.UpperCaseIdentifier() != null)
+            {
+                //TODO should this be a seperate class?
+                return new FspVariableExpr(context.UpperCaseIdentifier().GetText());
+            }
+
             Unimpl(context.Quote());
             Unimpl(context.Hash());
             Unimpl(context.At());

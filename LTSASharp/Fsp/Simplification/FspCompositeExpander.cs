@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Expressions;
-using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Ranges;
 
 namespace LTSASharp.Fsp.Simplification
@@ -11,18 +10,35 @@ namespace LTSASharp.Fsp.Simplification
     class FspCompositeExpander
     {
         private readonly FspComposite composite;
-        private FspExpressionEnvironment env;
 
-        public FspCompositeExpander(FspComposite composite)
+        private readonly FspDescription oldDesc;
+        private readonly FspDescription newDesc;
+
+        private readonly FspExpressionEnvironment env;
+        private readonly string name;
+
+        public FspCompositeExpander(FspComposite composite, FspDescription oldDesc, FspDescription newDesc)
         {
             this.composite = composite;
+            this.oldDesc = oldDesc;
+            this.newDesc = newDesc;
+
+            env = new FspExpressionEnvironment();
+            name = composite.Name;
+
+            foreach (var param in composite.Parameters)
+            {
+                var value = param.DefaultValue.GetValue(env);
+
+                name += "." + value;
+                env.PushVariable(param.Name, value);
+            }
         }
 
         public FspComposite Expand()
         {
-            var newComposite = new FspComposite { Name = composite.Name };
+            var newComposite = new FspComposite { Name = name };
 
-            env = new FspExpressionEnvironment();
 
             foreach (var result in composite.Body.Select(Expand).SelectMany(r => r))
             {
@@ -45,7 +61,31 @@ namespace LTSASharp.Fsp.Simplification
         private IList<FspCompositeBody> Expand(FspCompositeBody body)
         {
             if (body is FspRefComposite)
-                return new[] { body };
+            {
+                var compRef = (FspRefComposite)body;
+                if (!compRef.Arguments.Any())
+                    return new[] { body };
+
+                var newRef = compRef.Arguments.Aggregate(compRef.Name, (n, arg) => n + ("." + arg.GetValue(env)));
+
+                //TODO might be comp not proc...
+                var expandedProc = newDesc.Processes.SingleOrDefault(x => x.Name == newRef);
+                if (expandedProc == null)
+                {
+                    var paramProc = oldDesc.Processes.Single(x => x.Name == compRef.Name && x.Parameters.Count == compRef.Arguments.Count);
+
+                    // populate arguments
+                    var paramEnv = new FspExpressionEnvironment();
+                    for (int i = 0; i < paramProc.Parameters.Count; i++)
+                        paramEnv.PushVariable(paramProc.Parameters[i].Name, compRef.Arguments[i].GetValue(env));
+
+                    // add expanded ref'd process to description
+                    newDesc.Processes.Add(new FspProcessExpander(paramProc, newRef, paramEnv).Expand());
+                }
+
+                // return ref to expanded process
+                return new FspCompositeBody[] { new FspRefComposite(newRef) };
+            }
 
             if (body is FspLabelComposite)
             {

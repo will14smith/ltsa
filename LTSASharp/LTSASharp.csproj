@@ -96,6 +96,7 @@
     <Compile Include="Fsp\Processes\FspErrorProcess.cs" />
     <Compile Include="Fsp\Processes\FspIndexedProcess.cs" />
     <Compile Include="Fsp\Processes\FspLocalProcess.cs" />
+    <Compile Include="Fsp\FspParameter.cs" />
     <Compile Include="Fsp\Processes\FspProcess.cs" />
     <Compile Include="Fsp\Conversion\FspProcessConverter.cs" />
     <Compile Include="Fsp\Processes\FspRefProcess.cs" />

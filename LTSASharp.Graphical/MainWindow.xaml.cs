@@ -16,30 +16,8 @@ namespace LTSASharp.Graphical
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            //const string prog = "SWITCH = OFF, OFF = (on -> ON), ON = (off -> OFF).";
-            //const string prog = "INPUTSPEED = (engineOn -> CHECKSPEED), CHECKSPEED = (speed -> CHECKSPEED |engineOff -> INPUTSPEED).";
-            //const string prog = "BUFF = (in[i:0..3] -> out[i] -> BUFF).";
-            //const string prog = "SUM = (in[a:0..2][b:0..2] -> TOTAL[a+b]), TOTAL[s:0..4] = (out[s] -> SUM).";
-            //const string prog = "INPUTSPEED = (engineOn -> CHECKSPEED), CHECKSPEED = (speed -> CHECKSPEED |engineOff -> INPUTSPEED)." +
-            //                    "TEST = (a -> b -> TEST)." +
-            //                    "||COMP = (INPUTSPEED || TEST).).";
-            //const string prog = "MAKE_A   = (makeA->ready->used->MAKE_A)." +
-            //                    "MAKE_B   = (makeB->ready->used->MAKE_B)." +
-            //                    "ASSEMBLE = (ready->assemble->used->ASSEMBLE)." +
-            //                    "||FACTORY = (MAKE_A || MAKE_B || ASSEMBLE).";
-            //const string prog = "SWITCH = (on->off->SWITCH).\n" +
-            //                    "||TWO_SWITCH = (a:SWITCH || b:SWITCH).";
-            //const string prog =
-            //    "RESOURCE = (acquire->release->RESOURCE)." +
-            //    "USER = (acquire->use->release->USER)." +
-            //    "||RESOURCE_SHARE = (a:USER || b:USER || {a,b}::RESOURCE).";
-            //const string prog =
-            //    "SWITCH = (on->off->SWITCH)." +
-            //    "||SWITCHES =(forall[i:1..3] s[i]:SWITCH).";
-            const string prog = "P = (a[i:0..3] -> " +
-                    "( when i==0 x -> STOP" +
-                    "| when i!=0 y -> P" +
-                    ")).";
+            const string prog = "SWITCH = (on->off->SWITCH)." +
+                                "||SWITCHES(N=3) = (forall[i:1..N] s[i]:SWITCH).";
 
             Machine.FspDescription = prog;
         }

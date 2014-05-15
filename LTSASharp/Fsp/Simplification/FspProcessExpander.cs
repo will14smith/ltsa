@@ -4,38 +4,61 @@ using System.Linq;
 using System.Text;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Expressions;
-using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
-using LTSASharp.Fsp.Ranges;
 
 namespace LTSASharp.Fsp.Simplification
 {
     class FspProcessExpander
     {
         private readonly FspProcess process;
+        private readonly string name;
+        private readonly FspExpressionEnvironment env;
 
         public FspProcessExpander(FspProcess process)
         {
             this.process = process;
+
+            name = process.Name;
+            env = new FspExpressionEnvironment();
+
+            foreach (var param in process.Parameters)
+            {
+                var value = param.DefaultValue.GetValue(env);
+
+                name += "." + value;
+                env.PushVariable(param.Name, value);
+            }
+        }
+        public FspProcessExpander(FspProcess process, string name, FspExpressionEnvironment initialEnv)
+        {
+            this.process = process;
+            this.name = name;
+
+            env = initialEnv;
         }
 
         public FspProcess Expand()
         {
-            var newProcess = new FspProcess { Name = process.Name };
+            var newProcess = new FspProcess { Name = name };
 
             foreach (var entry in process.Body)
             {
                 foreach (var e in entry.Value)
+                {
+                    var newName = entry.Key;
+                    if (newName == process.Name)
+                        newName = name;
+
                     if (e is FspIndexedProcess)
                     {
-                        var results = ExpandIndexed(entry.Key, (FspIndexedProcess)e);
+                        var results = ExpandIndexed(newName, (FspIndexedProcess)e);
                         foreach (var result in results)
                             newProcess.Body.Map(result.Key, result.Value);
                     }
                     else
                     {
-                        newProcess.Body.Map(entry.Key, Expand(e));
-                    }
+                        newProcess.Body.Map(newName, Expand(e));
+                    }}
             }
 
             return newProcess;
@@ -91,6 +114,10 @@ namespace LTSASharp.Fsp.Simplification
             if (value is FspRefProcess)
             {
                 var refProc = (FspRefProcess)value;
+
+                if(refProc.Name == process.Name)
+                    refProc = new FspRefProcess(name, refProc.Indices);
+
                 if (!refProc.Indices.Any())
                     return value;
 
@@ -99,9 +126,9 @@ namespace LTSASharp.Fsp.Simplification
                 if (newIndices.All(x => x is FspIntegerExpr))
                 {
                     // flatten
-                    var name = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
+                    var newName = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
 
-                    return new FspRefProcess(name);
+                    return new FspRefProcess(newName);
                 }
 
                 return new FspRefProcess(refProc.Name, newIndices);
@@ -114,7 +141,6 @@ namespace LTSASharp.Fsp.Simplification
             throw new ArgumentException("Unexpected local process type", "value");
         }
 
-        private readonly FspExpressionEnvironment env = new FspExpressionEnvironment();
         private IEnumerable<FspChoice> Expand(FspChoice value)
         {
             var result = new List<FspChoice>();

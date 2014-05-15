@@ -38,19 +38,6 @@ namespace LTSASharp.Tests
         }
 
         [TestMethod]
-        public void ForAllParameter()
-        {
-            const string prog = 
-                "SWITCH = (on->off->SWITCH)." +
-                "||SWITCHES(N=3) =(forall[i:1..N] s[i]:SWITCH).";
-            
-            var fsp = CompileFsp(prog);
-            var lts = CompileLts(fsp);
-
-            //TODO make some assertions
-        }
-
-        [TestMethod]
         public void ResourceSharing()
         {
             const string prog = 

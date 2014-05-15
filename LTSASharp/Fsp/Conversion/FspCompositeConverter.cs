@@ -117,9 +117,15 @@ namespace LTSASharp.Fsp.Conversion
 
             var name = context.UpperCaseIdentifier();
 
-            Unimpl(context.argument());
+            var reference = new FspRefComposite(name.GetText());
 
-            return new FspRefComposite(name.GetText());
+            if (context.argument() != null)
+                foreach (var arg in context.argument().argumentList().expression())
+                {
+                    reference.Arguments.Add(arg.Accept(new FspExpressionConverter(env)));
+                }
+
+            return reference;
         }
     }
 }

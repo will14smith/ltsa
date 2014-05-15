@@ -12,15 +12,26 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "P = (a[i:0..3] -> " +
-                                "( when i==0 x -> STOP" +
-                                "| when i!=0 y -> P" +
-                                ")).";
-
+            const string prog = "P(X=1)   = (a[X] -> STOP)." +
+                                "||S(Y=2) = (P(Y+1) || P(Y+2))." +
+                                "||Q = S(3).";
+            
+            var sr = GetMemory();
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);
+            var er = GetMemory();
+
+            Console.WriteLine("Used {0:n0} kb memory", (er - sr) / 1024);
+
             
+
             Console.ReadLine();
+        }
+
+        private static long GetMemory()
+        {
+            return GC.GetTotalMemory(false);
+            //return Process.GetCurrentProcess().WorkingSet64;
         }
 
         private static LtsDescription CompileLts(FspDescription fsp)
