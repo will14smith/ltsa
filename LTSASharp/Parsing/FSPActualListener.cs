@@ -27,7 +27,6 @@ using IToken = Antlr4.Runtime.IToken;
 /// <see cref="FSPActualParser"/>.
 /// </summary>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.2.2-SNAPSHOT")]
-[System.CLSCompliant(false)]
 public interface IFSPActualListener : IParseTreeListener {
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FSPActualParser.relabelDefs"/>.

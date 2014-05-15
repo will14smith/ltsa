@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using DFA = Antlr4.Runtime.Dfa.DFA;
 
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.2.2-SNAPSHOT")]
-[System.CLSCompliant(false)]
 public partial class FSPActualParser : Parser {
 	public const int
 		Dot=1, DotDot=2, LSquare=3, RSquare=4, Colon=5, LCurly=6, RCurly=7, Comma=8, 

@@ -31,7 +31,6 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 /// of the available methods.
 /// </summary>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.2.2-SNAPSHOT")]
-[System.CLSCompliant(false)]
 public partial class FSPActualBaseListener : IFSPActualListener {
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FSPActualParser.relabelDefs"/>.
