@@ -11,13 +11,13 @@ namespace LTSASharp.Fsp.Simplification
         private readonly FspProcess process;
         private FspLocalProcess current;
 
-        private readonly FspRefProcess selfRef;
+        private readonly FspLocalRefProcess selfLocalRef;
 
         public FspProcessSimplifier(FspProcess process)
         {
             this.process = process;
 
-            selfRef = new FspRefProcess(process.Name);
+            selfLocalRef = new FspLocalRefProcess(process.Name);
         }
 
         public FspProcess Simplify()
@@ -46,12 +46,12 @@ namespace LTSASharp.Fsp.Simplification
 
         private FspLocalProcess Simplify(FspLocalProcess local, bool top)
         {
-            if (local is FspRefProcess)
+            if (local is FspLocalRefProcess)
             {
-                var name = Rewrite(((FspRefProcess)local).Name);
+                var name = Rewrite(((FspLocalRefProcess)local).Name);
 
                 if (name == process.Name)
-                    return selfRef;
+                    return selfLocalRef;
 
                 var inline = process.Body[name].Single();
 

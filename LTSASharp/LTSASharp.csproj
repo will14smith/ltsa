@@ -100,6 +100,7 @@
     <Compile Include="Fsp\FspParameter.cs" />
     <Compile Include="Fsp\Processes\FspProcess.cs" />
     <Compile Include="Fsp\Conversion\FspProcessConverter.cs" />
+    <Compile Include="Fsp\Processes\FspLocalRefProcess.cs" />
     <Compile Include="Fsp\Processes\FspRefProcess.cs" />
     <Compile Include="Fsp\Processes\FspSequenceProcess.cs" />
     <Compile Include="Fsp\Processes\FspStopProcess.cs" />

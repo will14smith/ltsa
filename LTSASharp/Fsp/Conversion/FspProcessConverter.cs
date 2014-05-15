@@ -128,8 +128,8 @@ namespace LTSASharp.Fsp.Conversion
                     return new FspErrorProcess();
                 default:
                     if (context.indices() != null)
-                        return new FspRefProcess(name, context.indices().expression().Select(x=>x.Accept(new FspExpressionConverter(env))));
-                    return new FspRefProcess(name);
+                        return new FspLocalRefProcess(name, context.indices().expression().Select(x => x.Accept(new FspExpressionConverter(env))));
+                    return new FspLocalRefProcess(name);
             }
         }
 
@@ -145,6 +145,28 @@ namespace LTSASharp.Fsp.Conversion
             }
 
             return choices;
+        }
+
+        public override FspLocalProcess VisitSequentialComposition(FSPActualParser.SequentialCompositionContext context)
+        {
+            // sequentialComposition: seqProcessList Semicolon baseLocalProcess;
+            // seqProcessList: processRef (Semicolon processRef)*;
+
+            var sequence = new FspSequenceProcess();
+
+            foreach (var seq in context.seqProcessList().processRef())
+            {
+                sequence.Processes.Add(seq.Accept(this));
+            }
+
+            sequence.Processes.Add(context.baseLocalProcess().Accept(this));
+
+            return sequence;
+        }
+
+        public override FspLocalProcess VisitProcessRef(FSPActualParser.ProcessRefContext context)
+        {
+            return new FspRefProcess(context.UpperCaseIdentifier().GetText());
         }
     }
 }

@@ -12,10 +12,10 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "P(X=1)   = (a[X] -> STOP)." +
-                                "||S(Y=2) = (P(Y+1) || P(Y+2))." +
-                                "||Q = S(3).";
-            
+            const string prog = "SP(I=0) = (a[I] -> END)." +
+                                "P123 = (start -> SP(1);SP(2);SP(3);END)." +
+                                "LOOP = P123;LOOP.";
+
             var sr = GetMemory();
             var fsp = CompileFsp(new AntlrInputStream(prog));
             var lts = CompileLts(fsp);

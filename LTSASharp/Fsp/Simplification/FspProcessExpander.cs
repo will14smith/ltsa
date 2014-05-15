@@ -111,12 +111,12 @@ namespace LTSASharp.Fsp.Simplification
                 return new FspChoices(choices);
             }
 
-            if (value is FspRefProcess)
+            if (value is FspLocalRefProcess)
             {
-                var refProc = (FspRefProcess)value;
+                var refProc = (FspLocalRefProcess)value;
 
                 if(refProc.Name == process.Name)
-                    refProc = new FspRefProcess(name, refProc.Indices);
+                    refProc = new FspLocalRefProcess(name, refProc.Indices);
 
                 if (!refProc.Indices.Any())
                     return value;
@@ -128,10 +128,10 @@ namespace LTSASharp.Fsp.Simplification
                     // flatten
                     var newName = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
 
-                    return new FspRefProcess(newName);
+                    return new FspLocalRefProcess(newName);
                 }
 
-                return new FspRefProcess(refProc.Name, newIndices);
+                return new FspLocalRefProcess(refProc.Name, newIndices);
             }
             if (value is FspEndProcess)
                 return value;

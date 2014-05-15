@@ -214,9 +214,9 @@ namespace LTSASharp.Lts.Conversion
                 return lts;
             }
 
-            if (process is FspRefProcess)
+            if (process is FspLocalRefProcess)
             {
-                var target = ((FspRefProcess)process).Name;
+                var target = ((FspLocalRefProcess)process).Name;
 
                 if (!initialStates.ContainsKey(target))
                 {
