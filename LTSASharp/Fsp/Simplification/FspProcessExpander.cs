@@ -23,7 +23,7 @@ namespace LTSASharp.Fsp.Simplification
             this.newDesc = newDesc;
 
             name = process.Name;
-            env = new FspExpressionEnvironment();
+            env = new FspExpressionEnvironment(oldDesc);
 
             foreach (var param in process.Parameters)
             {
@@ -47,6 +47,8 @@ namespace LTSASharp.Fsp.Simplification
         {
             var newProcess = new FspProcess { Name = name };
 
+            newProcess.AlphabetExtension.AddRange(process.AlphabetExtension);
+
             foreach (var entry in process.Body)
             {
                 foreach (var e in entry.Value)
@@ -64,7 +66,8 @@ namespace LTSASharp.Fsp.Simplification
                     else
                     {
                         newProcess.Body.Map(newName, Expand(e));
-                    }}
+                    }
+                }
             }
 
             return newProcess;
@@ -121,7 +124,7 @@ namespace LTSASharp.Fsp.Simplification
             {
                 var refProc = (FspLocalRefProcess)value;
 
-                if(refProc.Name == process.Name)
+                if (refProc.Name == process.Name)
                     refProc = new FspLocalRefProcess(name, refProc.Indices);
 
                 if (!refProc.Indices.Any())
@@ -142,7 +145,7 @@ namespace LTSASharp.Fsp.Simplification
 
             if (value is FspSequenceProcess)
             {
-                var seq = (FspSequenceProcess) value;
+                var seq = (FspSequenceProcess)value;
 
                 var newSeq = new FspSequenceProcess();
                 var changed = false;
@@ -170,7 +173,7 @@ namespace LTSASharp.Fsp.Simplification
                     var paramProc = oldDesc.Processes[procRef.Name];
 
                     // populate arguments
-                    var paramEnv = new FspExpressionEnvironment();
+                    var paramEnv = new FspExpressionEnvironment(oldDesc);
                     for (int i = 0; i < paramProc.Parameters.Count; i++)
                         paramEnv.PushVariable(paramProc.Parameters[i].Name, procRef.Arguments[i].GetValue(env));
 

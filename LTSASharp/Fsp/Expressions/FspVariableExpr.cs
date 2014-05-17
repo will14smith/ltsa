@@ -12,7 +12,7 @@
         public override FspExpression Evaluate(FspExpressionEnvironment env)
         {
             int val;
-            if (env.Variables.TryGetValue(Name, out val))
+            if (env.GetValue(Name, out val))
                 return new FspIntegerExpr(val);
 
             return this;

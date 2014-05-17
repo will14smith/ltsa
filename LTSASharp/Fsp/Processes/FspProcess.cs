@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Antlr4.Runtime.Misc;
+using LTSASharp.Fsp.Labels;
 
 namespace LTSASharp.Fsp.Processes
 {
@@ -8,11 +10,12 @@ namespace LTSASharp.Fsp.Processes
         public FspProcess()
         {
             Body = new MultiMap<string, FspLocalProcess>();
+            AlphabetExtension = new List<IFspActionLabel>();
         }
 
         public MultiMap<string, FspLocalProcess> Body { get; private set; }
-
-        // Alphabet ext
+        public List<IFspActionLabel> AlphabetExtension { get; private set; }
+        
         // Relabl 
         // Hiding 
 

@@ -167,6 +167,8 @@ namespace LTSASharp.Lts.Conversion
 
             var lts = Convert(fsp.Body[fsp.Name].Single(), fsp);
 
+            lts.Alphabet.UnionWith(fsp.AlphabetExtension.Select(x => new LtsLabel(x)));
+
             return lts;
         }
         private LtsSystem Convert(FspLocalProcess process, FspProcess fsp)
@@ -265,7 +267,7 @@ namespace LTSASharp.Lts.Conversion
                 // remap the referenced lts so that nothing conflicts
                 var mappedLts = new LtsSystem();
                 var stateMap = RemapStates(lts.States);
-                
+
                 mappedLts.States.AddRange(stateMap.Values);
                 mappedLts.Alphabet.AddRange(lts.Alphabet);
                 foreach (var trans in lts.Transitions)

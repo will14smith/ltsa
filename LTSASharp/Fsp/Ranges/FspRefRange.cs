@@ -13,7 +13,7 @@ namespace LTSASharp.Fsp.Ranges
 
         public override FspRangeBounds GetBounds(FspExpressionEnvironment env)
         {
-            throw new System.NotImplementedException();
+            return env.GetRange(Name).GetBounds(env);
         }
     }
 }

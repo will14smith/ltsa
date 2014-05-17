@@ -1,20 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using LTSASharp.Fsp.Ranges;
 
 namespace LTSASharp.Fsp.Expressions
 {
     public class FspExpressionEnvironment
     {
+        private readonly FspDescription description;
+
         private readonly Dictionary<string, int> variables;
         private readonly Dictionary<string, Stack<int>> variableStack;
         
-        public FspExpressionEnvironment()
+        public FspExpressionEnvironment(FspDescription description)
         {
+            this.description = description;
             variables = new Dictionary<string, int>();
             variableStack = new Dictionary<string, Stack<int>>();
         }
 
-        public IReadOnlyDictionary<string, int> Variables { get { return variables; } }
+        internal FspRange GetRange(string name)
+        {
+            return description.Ranges[name];
+        }
+
+        public int GetValue(string name)
+        {
+            int val;
+
+            if (GetValue(name, out val))
+                return val;
+
+
+            throw new InvalidOperationException();
+        }
+        public bool GetValue(string name, out int val)
+        {
+            if (variables.TryGetValue(name, out val))
+                return true;
+
+            if (!char.IsUpper(name[0]))
+                return false;
+
+            if (description.Constants.TryGetValue(name, out val))
+                return true;
+
+            return false;
+        }
 
         public void PushVariable(string name, int value)
         {
@@ -32,7 +63,7 @@ namespace LTSASharp.Fsp.Expressions
             }
         }
 
-        public void PopVariable(string name)
+        public virtual void PopVariable(string name)
         {
             if (variableStack.ContainsKey(name))
             {

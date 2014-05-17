@@ -1,5 +1,9 @@
-﻿using LTSASharp.Fsp.Composites;
+﻿using System;
+using LTSASharp.Fsp.Composites;
+using LTSASharp.Fsp.Expressions;
+using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
+using LTSASharp.Fsp.Ranges;
 using LTSASharp.Fsp.Simplification;
 using LTSASharp.Parsing;
 
@@ -8,7 +12,6 @@ namespace LTSASharp.Fsp.Conversion
     public class FspConveter : FspBaseConverter
     {
         private readonly FspConverterEnvironment env;
-
         public FspDescription Description { get; private set; }
 
         public FspConveter()
@@ -69,7 +72,14 @@ namespace LTSASharp.Fsp.Conversion
 
             Check(body.Accept(new FspProcessConverter(env, process)));
 
-            Unimpl(context.alphabetExtension());
+
+            if (context.alphabetExtension() != null)
+            {
+                var alphaExt = context.alphabetExtension().set().Accept(new FspLabelConverter(env));
+
+                alphaExt.Expand(new FspExpressionEnvironment(Description), x => process.AlphabetExtension.Add(x));
+            }
+
             Unimpl(context.relabel());
             Unimpl(context.hiding());
 
@@ -108,6 +118,45 @@ namespace LTSASharp.Fsp.Conversion
             Description.Processes.Add(composite.Name, composite);
 
             return true;
+        }
+
+        public override bool VisitMenuDef(FSPActualParser.MenuDefContext context)
+        {
+            // Ignore menus for now, it is a GUI thing
+
+            return true;
+        }
+
+        public override bool VisitConstantDef(FSPActualParser.ConstantDefContext context)
+        {
+            // constantDef: Const UpperCaseIdentifier Equal simpleExpression;
+
+            var name = context.UpperCaseIdentifier().GetText();
+            var value = context.simpleExpression().Accept(new FspExpressionConverter(env)).GetValue(new FspExpressionEnvironment(Description));
+
+            Description.Constants.Add(name, value);
+
+            return true;
+        }
+
+        public override bool VisitRangeDef(FSPActualParser.RangeDefContext context)
+        {
+            // rangeDef: Range UpperCaseIdentifier Equal simpleExpression DotDot simpleExpression;
+            var name = context.UpperCaseIdentifier().GetText();
+
+            var lowerValue = context.simpleExpression(0).Accept(new FspExpressionConverter(env)).GetValue(new FspExpressionEnvironment(Description));
+            var upperValue = context.simpleExpression(1).Accept(new FspExpressionConverter(env)).GetValue(new FspExpressionEnvironment(Description));
+
+            Description.Ranges.Add(name, new FspBoundedRange(lowerValue, upperValue));
+
+            return true;
+        }
+
+        public override bool VisitSetDef(FSPActualParser.SetDefContext context)
+        {
+            // setDef: Set UpperCaseIdentifier Equal LCurly setElements RCurly;
+
+            return base.VisitSetDef(context);
         }
     }
 }

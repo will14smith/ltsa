@@ -10,6 +10,12 @@ namespace LTSASharp.Fsp.Ranges
             Upper = upper;
         }
 
+        public FspBoundedRange(int lowerValue, int upperValue)
+        {
+            Lower = new FspIntegerExpr(lowerValue);
+            Upper = new FspIntegerExpr(upperValue);
+        }
+
         public FspExpression Lower { get; set; }
         public FspExpression Upper { get; set; }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using Antlr4.Runtime.Tree;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Parsing;
@@ -19,6 +18,11 @@ namespace LTSASharp.Fsp.Conversion
         public override FspExpression VisitExpression(FSPActualParser.ExpressionContext context)
         {
             return context.orExpr().Accept(this);
+        }
+
+        public override FspExpression VisitSimpleExpression(FSPActualParser.SimpleExpressionContext context)
+        {
+            return context.additiveExpr().Accept(this);
         }
 
         public override FspExpression VisitOrExpr(FSPActualParser.OrExprContext context)
