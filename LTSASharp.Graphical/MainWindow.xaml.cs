@@ -16,8 +16,9 @@ namespace LTSASharp.Graphical
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            const string prog = "SWITCH = (on->off->SWITCH)." +
-                                "||SWITCHES(N=3) = (forall[i:1..N] s[i]:SWITCH).";
+            const string prog = "SP(I=0) = (a[I] -> END)." +
+                                "P123 = (start -> SP(1);SP(2);SP(3);END)." +
+                                "LOOP = P123;LOOP.";
 
             Machine.FspDescription = prog;
         }
