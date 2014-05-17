@@ -39,11 +39,11 @@ namespace LTSASharp.Lts
                 var newTransitions = Transitions.Where(x => lts.States.Contains(x.Source)).ToSet();
                 var newStates = newTransitions.Select(x => x.Destination);
 
-                lts.Transitions.AddRange(newTransitions);
-                lts.States.AddRange(newStates);
+                lts.Transitions.UnionWith(newTransitions);
+                lts.States.UnionWith(newStates);
             }
 
-            lts.Alphabet.AddRange(lts.Transitions.Select(x => x.Action));
+            lts.Alphabet.UnionWith(lts.Transitions.Select(x => x.Action));
 
             return lts;
         }

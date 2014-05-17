@@ -5,14 +5,6 @@ namespace LTSASharp.Utilities
 {
     public static class SetExtensions
     {
-        public static void AddRange<TItem>(this ISet<TItem> set, IEnumerable<TItem> items)
-        {
-            foreach (var item in items)
-            {
-                set.Add(item);
-            }
-        }
-
         /// <summary>
         /// Perform a shallow clone of a set
         /// </summary>
@@ -21,7 +13,7 @@ namespace LTSASharp.Utilities
         {
             var newSet = new TSet();
 
-            newSet.AddRange(origSet);
+            newSet.UnionWith(origSet);
 
             return newSet;
         }
@@ -33,7 +25,7 @@ namespace LTSASharp.Utilities
         {
             var newSet = (ISet<TItem>)Activator.CreateInstance(origSet.GetType());
 
-            newSet.AddRange(origSet);
+            newSet.UnionWith(origSet);
 
             return newSet;
         }
@@ -45,7 +37,7 @@ namespace LTSASharp.Utilities
 
             var set = new HashSet<TItem>();
 
-            set.AddRange(items);
+            set.UnionWith(items);
 
             return set;
         }

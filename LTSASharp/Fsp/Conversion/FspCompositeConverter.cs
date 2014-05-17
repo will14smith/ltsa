@@ -70,6 +70,8 @@ namespace LTSASharp.Fsp.Conversion
                 }
             }
 
+            Unimpl(context.relabel());
+
             if (context.processRef() != null)
             {
                 var result = context.processRef().Accept(this);

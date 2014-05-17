@@ -18,19 +18,19 @@ namespace LTSASharp.Lts.Conversion
         {
             var newLts = new LtsSystem { InitialState = lts.InitialState };
 
-            newLts.States.AddRange(lts.States);
+            newLts.States.UnionWith(lts.States);
 
             var b1 = GetB1(lts.Alphabet).ToSet();
             var b2 = GetB2(lts.Alphabet).ToSet();
 
-            newLts.Alphabet.AddRange(lts.Alphabet);
+            newLts.Alphabet.UnionWith(lts.Alphabet);
             newLts.Alphabet.ExceptWith(b1);
             newLts.Alphabet.UnionWith(b2);
 
             var d1 = GetD1(lts.Transitions, b1).ToSet();
             var d2 = GetD2(d1);
 
-            newLts.Transitions.AddRange(lts.Transitions);
+            newLts.Transitions.UnionWith(lts.Transitions);
             newLts.Transitions.ExceptWith(d1);
             newLts.Transitions.UnionWith(d2);
 

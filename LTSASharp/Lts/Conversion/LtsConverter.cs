@@ -123,8 +123,8 @@ namespace LTSASharp.Lts.Conversion
                 }
 
             // A = Ap U Aq
-            lts.Alphabet.AddRange(p.Alphabet);
-            lts.Alphabet.AddRange(q.Alphabet);
+            lts.Alphabet.UnionWith(p.Alphabet);
+            lts.Alphabet.UnionWith(q.Alphabet);
 
             // delta == special
             //TODO optimise?
@@ -192,14 +192,14 @@ namespace LTSASharp.Lts.Conversion
                     var ltsC = Convert(c.Process, fsp);
 
                     //S
-                    lts.States.AddRange(ltsC.States);
+                    lts.States.UnionWith(ltsC.States);
 
                     //A
-                    lts.Alphabet.AddRange(ltsC.Alphabet);
+                    lts.Alphabet.UnionWith(ltsC.Alphabet);
                     lts.Alphabet.Add(a);
 
                     //Delta
-                    lts.Transitions.AddRange(ltsC.Transitions);
+                    lts.Transitions.UnionWith(ltsC.Transitions);
                     lts.Transitions.Add(new LtsAction(p, a, ltsC.InitialState));
                 }
 
@@ -243,15 +243,15 @@ namespace LTSASharp.Lts.Conversion
                     var subLts = Convert(sub, fsp);
 
 
-                    lts.States.AddRange(subLts.States);
-                    lts.Alphabet.AddRange(subLts.Alphabet);
+                    lts.States.UnionWith(subLts.States);
+                    lts.Alphabet.UnionWith(subLts.Alphabet);
 
                     foreach (var trans in lts.Transitions.Where(x => x.Destination == LtsState.End).ToList())
                     {
                         lts.Transitions.Remove(trans);
                         lts.Transitions.Add(new LtsAction(trans.Source, trans.Action, subLts.InitialState));
                     }
-                    lts.Transitions.AddRange(subLts.Transitions);
+                    lts.Transitions.UnionWith(subLts.Transitions);
 
                     // lts.InitialState doesn't change;
                 }
@@ -268,8 +268,8 @@ namespace LTSASharp.Lts.Conversion
                 var mappedLts = new LtsSystem();
                 var stateMap = RemapStates(lts.States);
 
-                mappedLts.States.AddRange(stateMap.Values);
-                mappedLts.Alphabet.AddRange(lts.Alphabet);
+                mappedLts.States.UnionWith(stateMap.Values);
+                mappedLts.Alphabet.UnionWith(lts.Alphabet);
                 foreach (var trans in lts.Transitions)
                 {
                     mappedLts.Transitions.Add(new LtsAction(stateMap[trans.Source], trans.Action, stateMap[trans.Destination]));
