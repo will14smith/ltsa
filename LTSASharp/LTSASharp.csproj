@@ -119,7 +119,6 @@
     <Compile Include="Fsp\Simplification\FspProcessSimplifier.cs" />
     <Compile Include="Fsp\Simplification\IFspExpander.cs" />
     <Compile Include="Lts\Conversion\LtsRelabeler.cs" />
-    <Compile Include="Lts\LtsCompositeState.cs" />
     <Compile Include="Lts\Conversion\LtsConverter.cs" />
     <Compile Include="Lts\LtsDescription.cs" />
     <Compile Include="Lts\LtsAction.cs" />

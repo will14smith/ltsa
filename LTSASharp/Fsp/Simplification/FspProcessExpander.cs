@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Processes;
@@ -140,6 +139,24 @@ namespace LTSASharp.Fsp.Simplification
 
                 return new FspLocalRefProcess(refProc.Name, newIndices);
             }
+
+            if (value is FspSequenceProcess)
+            {
+                var seq = (FspSequenceProcess) value;
+
+                var newSeq = new FspSequenceProcess();
+                var changed = false;
+                foreach (var subProc in seq.Processes)
+                {
+                    var newSubProc = Expand(subProc);
+
+                    newSeq.Processes.Add(newSubProc);
+                    changed |= newSubProc != subProc;
+                }
+
+                return changed ? newSeq : seq;
+            }
+
             if (value is FspRefProcess)
             {
                 var procRef = (FspRefProcess)value;

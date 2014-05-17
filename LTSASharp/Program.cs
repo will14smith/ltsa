@@ -22,9 +22,7 @@ namespace LTSASharp
             var er = GetMemory();
 
             Console.WriteLine("Used {0:n0} kb memory", (er - sr) / 1024);
-
             
-
             Console.ReadLine();
         }
 

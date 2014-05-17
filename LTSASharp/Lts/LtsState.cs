@@ -4,9 +4,9 @@ namespace LTSASharp.Lts
 {
     public class LtsState
     {
-        public static readonly LtsState End = new LtsState(-1);
+        public const int EndNumber = -1;
+        public static readonly LtsState End = new LtsState(EndNumber);
         public static int Initial = 0;
-        public static int Composite = -11;
 
         public int Number { get; private set; }
 

@@ -38,7 +38,7 @@ namespace LTSASharp.Lts.Conversion
         private LtsSystem Convert(FspBaseProcess process)
         {
             if (process is FspProcess)
-                return Convert((FspProcess) process);
+                return Convert((FspProcess)process);
 
             if (process is FspComposite)
                 return Convert((FspComposite)process);
@@ -112,7 +112,7 @@ namespace LTSASharp.Lts.Conversion
             foreach (var sp in p.States)
                 foreach (var sq in q.States)
                 {
-                    var state = new LtsState(GetStateNumber());
+                    var state = new LtsState(GetNextStateNumber());
 
                     lts.States.Add(state);
                     stateMap.Add(state, Tuple.Create(sp, sq));
@@ -178,7 +178,7 @@ namespace LTSASharp.Lts.Conversion
 
             if (process is FspChoices)
             {
-                var p = new LtsState(GetStateNumber());
+                var p = new LtsState(GetNextStateNumber());
 
                 lts.States.Add(p);
                 lts.InitialState = p;
@@ -230,11 +230,82 @@ namespace LTSASharp.Lts.Conversion
                 return lts;
             }
 
+            if (process is FspSequenceProcess)
+            {
+                var seq = (FspSequenceProcess)process;
+
+                lts = Convert(seq.Processes.First(), fsp);
+
+                foreach (var sub in seq.Processes.Skip(1))
+                {
+                    var subLts = Convert(sub, fsp);
+
+
+                    lts.States.AddRange(subLts.States);
+                    lts.Alphabet.AddRange(subLts.Alphabet);
+
+                    foreach (var trans in lts.Transitions.Where(x => x.Destination == LtsState.End).ToList())
+                    {
+                        lts.Transitions.Remove(trans);
+                        lts.Transitions.Add(new LtsAction(trans.Source, trans.Action, subLts.InitialState));
+                    }
+                    lts.Transitions.AddRange(subLts.Transitions);
+
+                    // lts.InitialState doesn't change;
+                }
+
+                return lts;
+            }
+
+            if (process is FspRefProcess)
+            {
+                //TODO handle when process is ref'd before convertion has happened
+                lts = description.Systems[((FspRefProcess)process).Name];
+
+                // remap the referenced lts so that nothing conflicts
+                var mappedLts = new LtsSystem();
+                var stateMap = RemapStates(lts.States);
+                
+                mappedLts.States.AddRange(stateMap.Values);
+                mappedLts.Alphabet.AddRange(lts.Alphabet);
+                foreach (var trans in lts.Transitions)
+                {
+                    mappedLts.Transitions.Add(new LtsAction(stateMap[trans.Source], trans.Action, stateMap[trans.Destination]));
+                }
+                mappedLts.InitialState = stateMap[lts.InitialState];
+
+                return mappedLts;
+            }
+
             throw new ArgumentException("Unexpected local process type", "process");
         }
+
+        private Dictionary<LtsState, LtsState> RemapStates(IEnumerable<LtsState> states)
+        {
+            var map = new Dictionary<LtsState, LtsState>();
+
+            foreach (var state in states.OrderBy(x => x.Number))
+            {
+                switch (state.Number)
+                {
+                    case LtsState.EndNumber:
+                        map.Add(LtsState.End, LtsState.End);
+                        break;
+                    default:
+                        if (state.Number < 0)
+                            throw new InvalidOperationException();
+
+                        map.Add(state, new LtsState(GetNextStateNumber()));
+                        break;
+                }
+            }
+
+            return map;
+        }
+
         #endregion
 
-        private int GetStateNumber()
+        private int GetNextStateNumber()
         {
             return stateNumber++;
         }
