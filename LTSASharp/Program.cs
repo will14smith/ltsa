@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Antlr4.Runtime;
 using LTSASharp.Fsp;
 using LTSASharp.Fsp.Conversion;
@@ -12,17 +13,19 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            const string prog = "SP(I=0) = (a[I] -> END)." +
-                                "P123 = (start -> SP(1);SP(2);SP(3);END)." +
-                                "LOOP = P123;LOOP.";
+            var a = CompileFsp(new AntlrFileStream(@"E:\Projects\C#\LTSASharp\Chapter_examples\chapter3_lts\printer_share.lts"));
+            var b = CompileLts(a);
 
-            var sr = GetMemory();
-            var fsp = CompileFsp(new AntlrInputStream(prog));
-            var lts = CompileLts(fsp);
-            var er = GetMemory();
+            foreach (var file in Directory.GetFiles(@"E:\Projects\C#\LTSASharp\Chapter_examples\chapter3_lts", "*.lts", SearchOption.AllDirectories))
+            {
+                var sr = GetMemory();
+                var fsp = CompileFsp(new AntlrFileStream(file));
+                var lts = CompileLts(fsp);
+                var er = GetMemory();
 
-            Console.WriteLine("Used {0:n0} kb memory", (er - sr) / 1024);
-            
+                Console.WriteLine("Used {0:n0} kb memory", (er - sr) / 1024);
+            }
+
             Console.ReadLine();
         }
 
