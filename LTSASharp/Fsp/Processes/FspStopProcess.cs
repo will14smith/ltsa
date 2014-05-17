@@ -1,3 +1,5 @@
+using LTSASharp.Fsp.Simplification;
+
 namespace LTSASharp.Fsp.Processes
 {
     internal class FspStopProcess : FspBaseLocalProcess
@@ -5,6 +7,11 @@ namespace LTSASharp.Fsp.Processes
         public override string ToString()
         {
             return "STOP";
+        }
+
+        public override FspLocalProcess ExpandProcess(FspExpanderEnvironment<FspProcess> env)
+        {
+            return this;
         }
     }
 }

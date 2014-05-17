@@ -1,4 +1,7 @@
-﻿using LTSASharp.Fsp.Labels;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LTSASharp.Fsp.Labels;
+using LTSASharp.Fsp.Simplification;
 
 namespace LTSASharp.Fsp.Composites
 {
@@ -11,6 +14,15 @@ namespace LTSASharp.Fsp.Composites
         {
             Body = body;
             Label = label;
+        }
+
+        public override IList<FspCompositeBody> ExpandProcess(FspExpanderEnvironment<FspComposite> env)
+        {
+            var compShare = this;
+
+            // Convert to relabel
+            return compShare.Body.ExpandProcess(env).Select(x => new FspPrefixRelabel(x, compShare.Label)).ToList<FspCompositeBody>();
+
         }
     }
 }

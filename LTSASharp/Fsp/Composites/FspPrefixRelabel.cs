@@ -1,5 +1,7 @@
-﻿using LTSASharp.Fsp.Labels;
+﻿using System.Collections.Generic;
+using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Relabelling;
+using LTSASharp.Fsp.Simplification;
 
 namespace LTSASharp.Fsp.Composites
 {
@@ -17,6 +19,11 @@ namespace LTSASharp.Fsp.Composites
         public override string ToString()
         {
             return Label + ":" + Body;
+        }
+
+        public override IList<FspCompositeBody> ExpandProcess(FspExpanderEnvironment<FspComposite> env)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

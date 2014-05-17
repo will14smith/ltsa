@@ -1,4 +1,5 @@
 ﻿using LTSASharp.Fsp.Ranges;
+using LTSASharp.Fsp.Simplification;
 
 namespace LTSASharp.Fsp.Processes
 {
@@ -11,6 +12,11 @@ namespace LTSASharp.Fsp.Processes
         {
             Process = process;
             Index = index;
+        }
+
+        public override FspLocalProcess ExpandProcess(FspExpanderEnvironment<FspProcess> env)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

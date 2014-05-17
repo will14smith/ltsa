@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LTSASharp.Fsp.Processes;
+using LTSASharp.Fsp.Simplification;
 
 namespace LTSASharp.Fsp.Choices
 {
@@ -9,7 +10,7 @@ namespace LTSASharp.Fsp.Choices
         public FspChoices(List<FspChoice> choices)
         {
             Children = choices;
-        } 
+        }
         public FspChoices()
         {
             Children = new List<FspChoice>();
@@ -20,6 +21,23 @@ namespace LTSASharp.Fsp.Choices
         public override string ToString()
         {
             return string.Join(" | ", Children.Select(x => "( " + x + " )"));
+        }
+
+        public override FspLocalProcess ExpandProcess(FspExpanderEnvironment<FspProcess> env)
+        {
+            var newChoices = new FspChoices();
+
+            foreach (var c in Children)
+            {
+                var expanded = c.ExpandProcess(env);
+
+                if (expanded is FspChoices)
+                    newChoices.Children.AddRange(((FspChoices)expanded).Children);
+                else
+                    newChoices.Children.Add((FspChoice)expanded);
+            }
+
+            return newChoices;
         }
     }
 }

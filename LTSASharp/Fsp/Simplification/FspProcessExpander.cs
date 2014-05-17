@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LTSASharp.Fsp.Choices;
+﻿using System.Collections.Generic;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Processes;
 
@@ -10,42 +7,24 @@ namespace LTSASharp.Fsp.Simplification
     class FspProcessExpander : IFspExpander<FspProcess>
     {
         private readonly FspProcess process;
-        private readonly FspDescription oldDesc;
-        private readonly FspDescription newDesc;
-
-        private readonly string name;
-        private readonly FspExpressionEnvironment env;
+        private readonly FspExpanderEnvironment<FspProcess> env;
 
         public FspProcessExpander(FspProcess process, FspDescription oldDesc, FspDescription newDesc)
         {
             this.process = process;
-            this.oldDesc = oldDesc;
-            this.newDesc = newDesc;
 
-            name = process.Name;
-            env = new FspExpressionEnvironment(oldDesc);
-
-            foreach (var param in process.Parameters)
-            {
-                var value = param.DefaultValue.GetValue(env);
-
-                name += "." + value;
-                env.PushVariable(param.Name, value);
-            }
+            env = new FspExpanderEnvironment<FspProcess>(process, oldDesc, newDesc);
         }
         public FspProcessExpander(FspProcess process, string name, FspExpressionEnvironment initialEnv, FspDescription oldDesc, FspDescription newDesc)
         {
             this.process = process;
-            this.oldDesc = oldDesc;
-            this.newDesc = newDesc;
 
-            this.name = name;
-            env = initialEnv;
+            env = new FspExpanderEnvironment<FspProcess>(process, oldDesc, newDesc, initialEnv, name);
         }
 
         public FspProcess Expand()
         {
-            var newProcess = new FspProcess { Name = name };
+            var newProcess = new FspProcess { Name = env.Name };
 
             newProcess.AlphabetExtension.AddRange(process.AlphabetExtension);
 
@@ -55,7 +34,7 @@ namespace LTSASharp.Fsp.Simplification
                 {
                     var newName = entry.Key;
                     if (newName == process.Name)
-                        newName = name;
+                        newName = env.Name;
 
                     if (e is FspIndexedProcess)
                     {
@@ -65,7 +44,7 @@ namespace LTSASharp.Fsp.Simplification
                     }
                     else
                     {
-                        newProcess.Body.Map(newName, Expand(e));
+                        newProcess.Body.Map(newName, e.ExpandProcess(env));
                     }
                 }
             }
@@ -73,13 +52,13 @@ namespace LTSASharp.Fsp.Simplification
             return newProcess;
         }
 
-        private Dictionary<string, FspLocalProcess> ExpandIndexed(string name, FspIndexedProcess value)
+        private Dictionary<string, FspLocalProcess> ExpandIndexed(string namePrefix, FspIndexedProcess value)
         {
             var results = new Dictionary<string, FspLocalProcess>();
 
-            value.Index.Iterate(env, val =>
+            value.Index.Iterate(env.ExprEnv, val =>
             {
-                var newName = name + "." + val;
+                var newName = namePrefix + "." + val;
 
                 if (value.Process is FspIndexedProcess)
                 {
@@ -89,131 +68,11 @@ namespace LTSASharp.Fsp.Simplification
                 }
                 else
                 {
-                    results.Add(newName, Expand(value.Process));
+                    results.Add(newName, value.Process.ExpandProcess(env));
                 }
             });
 
             return results;
-        }
-
-        private FspLocalProcess Expand(FspLocalProcess value)
-        {
-            if (value is FspChoices)
-            {
-                var newChoices = new FspChoices();
-
-                foreach (var c in ((FspChoices)value).Children)
-                {
-                    newChoices.Children.AddRange(Expand(c));
-                }
-
-                return newChoices;
-            }
-
-            if (value is FspChoice)
-            {
-                var choices = Expand((FspChoice)value).ToList();
-
-                if (choices.Count == 1)
-                    return choices[0];
-
-                return new FspChoices(choices);
-            }
-
-            if (value is FspLocalRefProcess)
-            {
-                var refProc = (FspLocalRefProcess)value;
-
-                if (refProc.Name == process.Name)
-                    refProc = new FspLocalRefProcess(name, refProc.Indices);
-
-                if (!refProc.Indices.Any())
-                    return value;
-
-                var newIndices = refProc.Indices.Select(index => index.Evaluate(env)).ToList();
-
-                if (newIndices.All(x => x is FspIntegerExpr))
-                {
-                    // flatten
-                    var newName = newIndices.Cast<FspIntegerExpr>().Aggregate(refProc.Name, (n, e) => n + "." + e.Value);
-
-                    return new FspLocalRefProcess(newName);
-                }
-
-                return new FspLocalRefProcess(refProc.Name, newIndices);
-            }
-
-            if (value is FspSequenceProcess)
-            {
-                var seq = (FspSequenceProcess)value;
-
-                var newSeq = new FspSequenceProcess();
-                var changed = false;
-                foreach (var subProc in seq.Processes)
-                {
-                    var newSubProc = Expand(subProc);
-
-                    newSeq.Processes.Add(newSubProc);
-                    changed |= newSubProc != subProc;
-                }
-
-                return changed ? newSeq : seq;
-            }
-
-            if (value is FspRefProcess)
-            {
-                var procRef = (FspRefProcess)value;
-                if (!procRef.Arguments.Any())
-                    return value;
-
-                var newRef = procRef.Arguments.Aggregate(procRef.Name, (n, arg) => n + ("." + arg.GetValue(env)));
-
-                if (!newDesc.Processes.ContainsKey(newRef))
-                {
-                    var paramProc = oldDesc.Processes[procRef.Name];
-
-                    // populate arguments
-                    var paramEnv = new FspExpressionEnvironment(oldDesc);
-                    for (int i = 0; i < paramProc.Parameters.Count; i++)
-                        paramEnv.PushVariable(paramProc.Parameters[i].Name, procRef.Arguments[i].GetValue(env));
-
-                    var expander = FspExpanderFactory.GetExpander(paramProc, newRef, paramEnv, oldDesc, newDesc);
-
-                    // add expanded ref'd process to description
-                    newDesc.Processes.Add(newRef, expander.Expand());
-                }
-
-                // return ref to expanded process
-                return new FspRefProcess(newRef);
-            }
-
-            if (value is FspEndProcess)
-                return value;
-            if (value is FspStopProcess)
-                return value;
-
-            throw new ArgumentException("Unexpected local process type", "value");
-        }
-
-        private IEnumerable<FspChoice> Expand(FspChoice value)
-        {
-            var result = new List<FspChoice>();
-
-            value.Label.Expand(env, label =>
-            {
-                if (value.Guard != null && value.Guard.GetValue(env) == 0)
-                    return;
-
-                var choice = new FspChoice
-                {
-                    Label = label,
-                    Process = Expand(value.Process)
-                };
-
-                result.Add(choice);
-            });
-
-            return result;
         }
     }
 }
