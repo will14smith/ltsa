@@ -12,7 +12,7 @@ namespace LTSASharp.Fsp.Simplification
         {
             var process = p as FspProcess;
             if (process != null)
-                return (IFspExpander<TProcess>)new FspProcessExpander(process, n, e);
+                return (IFspExpander<TProcess>)new FspProcessExpander(process, n, e, oldDesc, newDesc);
 
             var composite = p as FspComposite;
             if (composite != null)
@@ -26,7 +26,7 @@ namespace LTSASharp.Fsp.Simplification
         {
             var process = p as FspProcess;
             if (process != null)
-                return (IFspExpander<TProcess>)new FspProcessExpander(process);
+                return (IFspExpander<TProcess>)new FspProcessExpander(process, oldDesc, newDesc);
 
             var composite = p as FspComposite;
             if (composite != null)

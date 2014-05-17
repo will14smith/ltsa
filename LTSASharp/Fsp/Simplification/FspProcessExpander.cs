@@ -11,12 +11,17 @@ namespace LTSASharp.Fsp.Simplification
     class FspProcessExpander : IFspExpander<FspProcess>
     {
         private readonly FspProcess process;
+        private readonly FspDescription oldDesc;
+        private readonly FspDescription newDesc;
+
         private readonly string name;
         private readonly FspExpressionEnvironment env;
 
-        public FspProcessExpander(FspProcess process)
+        public FspProcessExpander(FspProcess process, FspDescription oldDesc, FspDescription newDesc)
         {
             this.process = process;
+            this.oldDesc = oldDesc;
+            this.newDesc = newDesc;
 
             name = process.Name;
             env = new FspExpressionEnvironment();
@@ -29,11 +34,13 @@ namespace LTSASharp.Fsp.Simplification
                 env.PushVariable(param.Name, value);
             }
         }
-        public FspProcessExpander(FspProcess process, string name, FspExpressionEnvironment initialEnv)
+        public FspProcessExpander(FspProcess process, string name, FspExpressionEnvironment initialEnv, FspDescription oldDesc, FspDescription newDesc)
         {
             this.process = process;
-            this.name = name;
+            this.oldDesc = oldDesc;
+            this.newDesc = newDesc;
 
+            this.name = name;
             env = initialEnv;
         }
 
@@ -133,6 +140,33 @@ namespace LTSASharp.Fsp.Simplification
 
                 return new FspLocalRefProcess(refProc.Name, newIndices);
             }
+            if (value is FspRefProcess)
+            {
+                var procRef = (FspRefProcess)value;
+                if (!procRef.Arguments.Any())
+                    return value;
+
+                var newRef = procRef.Arguments.Aggregate(procRef.Name, (n, arg) => n + ("." + arg.GetValue(env)));
+
+                if (!newDesc.Processes.ContainsKey(newRef))
+                {
+                    var paramProc = oldDesc.Processes[procRef.Name];
+
+                    // populate arguments
+                    var paramEnv = new FspExpressionEnvironment();
+                    for (int i = 0; i < paramProc.Parameters.Count; i++)
+                        paramEnv.PushVariable(paramProc.Parameters[i].Name, procRef.Arguments[i].GetValue(env));
+
+                    var expander = FspExpanderFactory.GetExpander(paramProc, newRef, paramEnv, oldDesc, newDesc);
+
+                    // add expanded ref'd process to description
+                    newDesc.Processes.Add(newRef, expander.Expand());
+                }
+
+                // return ref to expanded process
+                return new FspRefProcess(newRef);
+            }
+
             if (value is FspEndProcess)
                 return value;
             if (value is FspStopProcess)

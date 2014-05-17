@@ -166,7 +166,19 @@ namespace LTSASharp.Fsp.Conversion
 
         public override FspLocalProcess VisitProcessRef(FSPActualParser.ProcessRefContext context)
         {
-            return new FspRefProcess(context.UpperCaseIdentifier().GetText());
+            // UpperCaseIdentifier argument?
+
+            var name = context.UpperCaseIdentifier();
+
+            var reference = new FspRefProcess(name.GetText());
+
+            if (context.argument() != null)
+                foreach (var arg in context.argument().argumentList().expression())
+                {
+                    reference.Arguments.Add(arg.Accept(new FspExpressionConverter(env)));
+                }
+
+            return reference;
         }
     }
 }

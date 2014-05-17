@@ -78,7 +78,6 @@ namespace LTSASharp.Fsp.Simplification
 
                 var newRef = compRef.Arguments.Aggregate(compRef.Name, (n, arg) => n + ("." + arg.GetValue(env)));
 
-                //TODO might be comp not proc...
                 if (!newDesc.Processes.ContainsKey(newRef))
                 {
                     var paramProc = oldDesc.Processes[compRef.Name];
