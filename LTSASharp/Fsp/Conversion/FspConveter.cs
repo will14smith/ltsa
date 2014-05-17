@@ -71,8 +71,7 @@ namespace LTSASharp.Fsp.Conversion
             }
 
             Check(body.Accept(new FspProcessConverter(env, process)));
-
-
+            
             if (context.alphabetExtension() != null)
             {
                 var alphaExt = context.alphabetExtension().set().Accept(new FspLabelConverter(env));
@@ -81,7 +80,10 @@ namespace LTSASharp.Fsp.Conversion
             }
 
             Unimpl(context.relabel());
-            Unimpl(context.hiding());
+
+            HandleHiding(context.hiding(), process);
+
+
 
             Description.Processes.Add(process.Name, process);
 
@@ -113,11 +115,29 @@ namespace LTSASharp.Fsp.Conversion
             Check(body.Accept(new FspCompositeConverter(env, composite)));
 
             Unimpl(context.priority());
-            Unimpl(context.hiding());
+
+            HandleHiding(context.hiding(), composite);
 
             Description.Processes.Add(composite.Name, composite);
 
             return true;
+        }
+
+        private void HandleHiding(FSPActualParser.HidingContext context, FspBaseProcess process)
+        {
+            if (context != null)
+            {
+                var hiding = context.set().Accept(new FspLabelConverter(env));
+
+                hiding.Expand(new FspExpressionEnvironment(Description), x => process.Hiding.Add(x));
+
+                if (context.BackSlash() != null)
+                    process.HidingMode = FspHidingMode.Black;
+                else if (context.At() != null)
+                    process.HidingMode = FspHidingMode.White;
+                else
+                    throw new InvalidOperationException();
+            }
         }
 
         public override bool VisitMenuDef(FSPActualParser.MenuDefContext context)

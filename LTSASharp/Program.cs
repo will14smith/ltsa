@@ -13,7 +13,7 @@ namespace LTSASharp
     {
         static void Main(string[] args)
         {
-            var a = CompileFsp(new AntlrFileStream(@"E:\Projects\C#\LTSASharp\Chapter_examples\chapter3_lts\printer_share.lts"));
+            var a = CompileFsp(new AntlrFileStream(@"E:\Projects\C#\LTSASharp\Chapter_examples\chapter3_lts\client_serverv2.lts"));
             var b = CompileLts(a);
 
             foreach (var file in Directory.GetFiles(@"E:\Projects\C#\LTSASharp\Chapter_examples\chapter3_lts", "*.lts", SearchOption.AllDirectories))

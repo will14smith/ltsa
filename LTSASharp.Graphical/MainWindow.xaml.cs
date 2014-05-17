@@ -16,9 +16,9 @@ namespace LTSASharp.Graphical
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            const string prog = "SP(I=0) = (a[I] -> END)." +
-                                "P123 = (start -> SP(1);SP(2);SP(3);END)." +
-                                "LOOP = P123;LOOP.";
+            const string prog = "SERVERv2 = (accept.request->service->accept.reply->SERVERv2)." +
+                                "CLIENTv2 = (call.request->call.reply->continue->CLIENTv2)." +
+                                "||CLIENT_SERVERv2 = (CLIENTv2 || SERVERv2)/{call/accept}.";
 
             Machine.FspDescription = prog;
         }

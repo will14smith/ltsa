@@ -27,6 +27,8 @@ namespace LTSASharp.Fsp.Simplification
             var newProcess = new FspProcess { Name = env.Name };
 
             newProcess.AlphabetExtension.AddRange(process.AlphabetExtension);
+            newProcess.Hiding.AddRange(process.Hiding);
+            newProcess.HidingMode = process.HidingMode;
 
             foreach (var entry in process.Body)
             {

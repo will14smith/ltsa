@@ -10,14 +10,14 @@ namespace LTSASharp.Fsp.Processes
         public FspProcess()
         {
             Body = new MultiMap<string, FspLocalProcess>();
+
             AlphabetExtension = new List<IFspActionLabel>();
         }
 
         public MultiMap<string, FspLocalProcess> Body { get; private set; }
         public List<IFspActionLabel> AlphabetExtension { get; private set; }
         
-        // Relabl 
-        // Hiding 
+        // Relabel 
 
         public override string ToString()
         {

@@ -85,6 +85,7 @@
     <Compile Include="Fsp\Expressions\FspVariableExpr.cs" />
     <Compile Include="Fsp\FspDescription.cs" />
     <Compile Include="Fsp\FspBaseProcess.cs" />
+    <Compile Include="Fsp\FspHidingMode.cs" />
     <Compile Include="Fsp\Labels\FspActionRange.cs" />
     <Compile Include="Fsp\Labels\FspActionSet.cs" />
     <Compile Include="Fsp\Processes\FspBaseLocalProcess.cs" />

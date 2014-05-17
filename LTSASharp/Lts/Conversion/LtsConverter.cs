@@ -37,13 +37,50 @@ namespace LTSASharp.Lts.Conversion
 
         private LtsSystem Convert(FspBaseProcess process)
         {
+            LtsSystem lts = null;
+
             if (process is FspProcess)
-                return Convert((FspProcess)process);
+                lts = Convert((FspProcess)process);
 
             if (process is FspComposite)
-                return Convert((FspComposite)process);
+                lts = Convert((FspComposite)process);
 
-            throw new ArgumentException("Unexpected process type", "process");
+            if (lts == null)
+                throw new ArgumentException("Unexpected process type", "process");
+
+            var labelsToHide = new HashSet<LtsLabel>();
+            if (process.HidingMode == FspHidingMode.Black)
+            {
+                labelsToHide.UnionWith(process.Hiding.Select(x => new LtsLabel(x)));
+            }
+            else if (process.HidingMode == FspHidingMode.White)
+            {
+                labelsToHide.UnionWith(lts.Alphabet);
+                labelsToHide.ExceptWith(process.Hiding.Select(x => new LtsLabel(x)));
+            }
+
+            if (!labelsToHide.Any())
+                return lts;
+
+            var newLts = new LtsSystem();
+
+            newLts.States.UnionWith(lts.States);
+
+            newLts.Alphabet.UnionWith(lts.Alphabet);
+            newLts.Alphabet.ExceptWith(labelsToHide);
+            newLts.Alphabet.Add(LtsLabel.Tau);
+
+            foreach (var trans in lts.Transitions)
+            {
+                if (labelsToHide.Contains(trans.Action))
+                    newLts.Transitions.Add(new LtsAction(trans.Source, LtsLabel.Tau, trans.Destination));
+                else
+                    newLts.Transitions.Add(trans);
+            }
+
+            newLts.InitialState = lts.InitialState;
+
+            return newLts;
         }
 
         #region Composities
