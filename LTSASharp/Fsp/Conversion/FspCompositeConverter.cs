@@ -55,7 +55,7 @@ namespace LTSASharp.Fsp.Conversion
                     {
                         // ActionLabels :: ActionLabel :
                         var label2 = al2.Accept(new FspLabelConverter(env));
-                        prefixFunc = c => new FspShareLabelComposite(c, label1, label2);
+                        prefixFunc = c => new FspShareComposite(new FspLabelComposite(c, label2), label1);
                     }
                     else
                     {

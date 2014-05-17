@@ -23,7 +23,7 @@ namespace LTSASharp.Fsp.Simplification
             this.oldDesc = oldDesc;
             this.newDesc = newDesc;
 
-            env = new FspExpressionEnvironment();
+            env = new FspExpressionEnvironment(oldDesc);
             name = composite.Name;
 
             foreach (var param in composite.Parameters)
@@ -83,7 +83,7 @@ namespace LTSASharp.Fsp.Simplification
                     var paramProc = oldDesc.Processes[compRef.Name];
 
                     // populate arguments
-                    var paramEnv = new FspExpressionEnvironment();
+                    var paramEnv = new FspExpressionEnvironment(oldDesc);
                     for (int i = 0; i < paramProc.Parameters.Count; i++)
                         paramEnv.PushVariable(paramProc.Parameters[i].Name, compRef.Arguments[i].GetValue(env));
 
@@ -115,7 +115,7 @@ namespace LTSASharp.Fsp.Simplification
                     return results;
                 }
                 // Convert to relabel
-                compLabel.Label.Expand(env, label => results.Add(new FspPrefixRelabel(compLabel.Body, label)));
+                compLabel.Label.Expand(env, label => results.AddRange(Expand(compLabel.Body).Select(x => new FspPrefixRelabel(x, label))));
 
                 return results;
             }
@@ -125,7 +125,7 @@ namespace LTSASharp.Fsp.Simplification
                 var compShare = (FspShareComposite)body;
 
                 // Convert to relabel
-                return new FspCompositeBody[] { new FspPrefixRelabel(compShare.Body, compShare.Label) };
+                return Expand(compShare.Body).Select(x => new FspPrefixRelabel(x, compShare.Label)).ToList<FspCompositeBody>();
             }
 
             if (body is FspRangeComposition)
