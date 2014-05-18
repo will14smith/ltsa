@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Labels;
-using LTSASharp.Fsp.Relabelling;
 using LTSASharp.Fsp.Simplification;
 
-namespace LTSASharp.Fsp.Composites
+namespace LTSASharp.Fsp.Relabelling
 {
     class FspPrefixRelabel : FspCompositeBody, IFspRelabel
     {

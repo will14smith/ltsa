@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Labels;
-using LTSASharp.Fsp.Processes;
 using LTSASharp.Fsp.Simplification;
 
-namespace LTSASharp.Fsp.Choices
+namespace LTSASharp.Fsp.Processes
 {
     internal class FspChoice : FspLocalProcess
     {

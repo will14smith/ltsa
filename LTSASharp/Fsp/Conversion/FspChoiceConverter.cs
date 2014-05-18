@@ -1,4 +1,3 @@
-using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Processes;
 using LTSASharp.Parsing;

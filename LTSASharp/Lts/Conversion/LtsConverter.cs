@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime.Misc;
 using LTSASharp.Fsp;
-using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
-using LTSASharp.Utilities;
+using LTSASharp.Fsp.Relabelling;
 using FspBaseProcess = LTSASharp.Fsp.FspBaseProcess;
 
 namespace LTSASharp.Lts.Conversion
@@ -105,7 +104,7 @@ namespace LTSASharp.Lts.Conversion
                 var relabel = (FspPrefixRelabel)composite;
                 var lts = Convert(relabel.Body);
 
-                var relabelMap = new MultiMap<LtsLabel, LtsLabel>();
+                var map = new MultiMap<LtsLabel, LtsLabel>();
 
                 // Given:
                 //     USER = (acquire->use->release->USER).
@@ -114,10 +113,33 @@ namespace LTSASharp.Lts.Conversion
 
                 foreach (var label in lts.Alphabet)
                 {
-                    BuildMap(label, relabel.Label, relabelMap);
+                    BuildMap(label, relabel.Label, map);
                 }
 
-                return new LtsRelabeler(relabelMap).Relabel(lts);
+                return new LtsRelabeler(map).Relabel(lts);
+            }
+
+            if (composite is FspRelabelComposite)
+            {
+                var relabel = (FspRelabelComposite)composite;
+                var lts = Convert(relabel.Body);
+
+                var map = new MultiMap<LtsLabel, LtsLabel>();
+
+                foreach (var entry in relabel.Relabel.Entries)
+                {
+                    if (entry is FspRelabel.DirectEntry)
+                    {
+                        var direct = (FspRelabel.DirectEntry)entry;
+                        map.Map(new LtsLabel(direct.Old), new LtsLabel(direct.New));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+
+                return new LtsRelabeler(map).Relabel(lts);
             }
 
             throw new InvalidOperationException();

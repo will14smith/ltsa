@@ -2,6 +2,7 @@
 using System.Linq;
 using Antlr4.Runtime.Misc;
 using LTSASharp.Fsp.Labels;
+using LTSASharp.Fsp.Relabelling;
 
 namespace LTSASharp.Fsp.Processes
 {
@@ -12,12 +13,13 @@ namespace LTSASharp.Fsp.Processes
             Body = new MultiMap<string, FspLocalProcess>();
 
             AlphabetExtension = new List<IFspActionLabel>();
+            Relabel = new FspRelabel();
         }
 
         public MultiMap<string, FspLocalProcess> Body { get; private set; }
         public List<IFspActionLabel> AlphabetExtension { get; private set; }
-        
-        // Relabel 
+
+        public FspRelabel Relabel { get; set; }
 
         public override string ToString()
         {

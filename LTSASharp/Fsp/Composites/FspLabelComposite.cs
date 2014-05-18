@@ -2,6 +2,7 @@
 using System.Linq;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Ranges;
+using LTSASharp.Fsp.Relabelling;
 using LTSASharp.Fsp.Simplification;
 
 namespace LTSASharp.Fsp.Composites

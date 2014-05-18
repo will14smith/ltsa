@@ -58,6 +58,7 @@
     <Compile Include="Fsp\Conversion\FspExpressionConverter.cs" />
     <Compile Include="Fsp\Conversion\FspLabelConverter.cs" />
     <Compile Include="Fsp\Conversion\FspRangeConverter.cs" />
+    <Compile Include="Fsp\Conversion\FspRelabelConverter.cs" />
     <Compile Include="Fsp\Expressions\FspAddExpr.cs" />
     <Compile Include="Fsp\Expressions\FspAndExpr.cs" />
     <Compile Include="Fsp\Expressions\FspBinaryExpression.cs" />
@@ -89,8 +90,8 @@
     <Compile Include="Fsp\Labels\FspActionRange.cs" />
     <Compile Include="Fsp\Labels\FspActionSet.cs" />
     <Compile Include="Fsp\Processes\FspBaseLocalProcess.cs" />
-    <Compile Include="Fsp\Choices\FspChoice.cs" />
-    <Compile Include="Fsp\Choices\FspChoices.cs" />
+    <Compile Include="Fsp\Processes\FspChoice.cs" />
+    <Compile Include="Fsp\Processes\FspChoices.cs" />
     <Compile Include="Fsp\Conversion\FspConveter.cs" />
     <Compile Include="Fsp\Composites\FspComposite.cs" />
     <Compile Include="Fsp\Processes\FspEndProcess.cs" />
@@ -111,7 +112,8 @@
     <Compile Include="Fsp\Ranges\FspExpressionRange.cs" />
     <Compile Include="Fsp\Ranges\FspRange.cs" />
     <Compile Include="Fsp\Ranges\FspRefRange.cs" />
-    <Compile Include="Fsp\Composites\FspPrefixRelabel.cs" />
+    <Compile Include="Fsp\Relabelling\FspRelabelComposite.cs" />
+    <Compile Include="Fsp\Relabelling\FspPrefixRelabel.cs" />
     <Compile Include="Fsp\Relabelling\FspRelabel.cs" />
     <Compile Include="Fsp\Simplification\FspCompositeExpander.cs" />
     <Compile Include="Fsp\Simplification\FspExpanderEnvironment.cs" />

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using LTSASharp.Fsp.Choices;
 using LTSASharp.Fsp.Labels;
 using LTSASharp.Fsp.Processes;
 

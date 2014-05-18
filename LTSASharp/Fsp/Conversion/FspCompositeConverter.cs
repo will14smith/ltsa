@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LTSASharp.Fsp.Composites;
+using LTSASharp.Fsp.Relabelling;
 using LTSASharp.Parsing;
 
 namespace LTSASharp.Fsp.Conversion
@@ -70,7 +71,14 @@ namespace LTSASharp.Fsp.Conversion
                 }
             }
 
-            Unimpl(context.relabel());
+            if (context.relabel() != null)
+            {
+                var relabel = context.relabel().Accept(new FspRelabelConverter(env));
+
+                var oldPrefixFunc = prefixFunc;
+
+                prefixFunc = c => new FspRelabelComposite(oldPrefixFunc(c), relabel);
+            }
 
             if (context.processRef() != null)
             {

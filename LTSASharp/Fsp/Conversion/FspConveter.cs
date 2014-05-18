@@ -1,4 +1,5 @@
 ﻿using System;
+using Antlr4.Runtime.Tree;
 using LTSASharp.Fsp.Composites;
 using LTSASharp.Fsp.Expressions;
 using LTSASharp.Fsp.Labels;
@@ -95,7 +96,7 @@ namespace LTSASharp.Fsp.Conversion
             // OrOr UpperCaseIdentifier param? Equal compositeBody priority? hiding? Dot
             var composite = new FspComposite();
 
-            var name = context.UpperCaseIdentifier();
+            composite.Name = context.UpperCaseIdentifier().GetText();
 
             if (context.param() != null)
             {
@@ -110,10 +111,9 @@ namespace LTSASharp.Fsp.Conversion
 
             var body = context.compositeBody();
 
-            composite.Name = name.GetText();
-
             Check(body.Accept(new FspCompositeConverter(env, composite)));
 
+            // process relabeling up here
             Unimpl(context.priority());
 
             HandleHiding(context.hiding(), composite);

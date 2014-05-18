@@ -29,6 +29,7 @@ namespace LTSASharp.Fsp.Simplification
             newProcess.AlphabetExtension.AddRange(process.AlphabetExtension);
             newProcess.Hiding.AddRange(process.Hiding);
             newProcess.HidingMode = process.HidingMode;
+            newProcess.Relabel = process.Relabel;
 
             foreach (var entry in process.Body)
             {
