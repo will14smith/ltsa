@@ -20,9 +20,9 @@ namespace LTSASharp.Fsp.Relabelling
         {
             var processes = Body.ExpandProcess(env);
 
-            //TODO expand relabel
+            var relabel = Relabel.Expand(env);
 
-            return processes.Select(x => new FspRelabelComposite(x, Relabel)).ToList<FspCompositeBody>();
+            return processes.Select(x => new FspRelabelComposite(x, relabel)).ToList<FspCompositeBody>();
         }
     }
 }

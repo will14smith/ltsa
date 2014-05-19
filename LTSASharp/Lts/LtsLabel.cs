@@ -56,10 +56,10 @@ namespace LTSASharp.Lts
             {
                 var parts = Parts;
 
-                for (var i = parts.Length - 1; i >= 0; i--)
+                for (var i = parts.Length - 1; i > 0; i--)
                 {
-                    var p = new LtsLabel(string.Join(".", parts.Take(i + 1)));
-                    var s = new LtsLabel(string.Join(".", parts.Skip(i + 1)));
+                    var p = new LtsLabel(string.Join(".", parts.Take(i)));
+                    var s = new LtsLabel(string.Join(".", parts.Skip(i)));
 
                     yield return Tuple.Create(p, s);
                 }

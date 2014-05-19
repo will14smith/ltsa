@@ -37,7 +37,7 @@ namespace LTSASharp.Fsp.Conversion
                 var newLabel = context.actionLabels(0).Accept(new FspLabelConverter(env));
                 var oldLabel = context.actionLabels(1).Accept(new FspLabelConverter(env));
 
-                relabel.Entries.Add(new FspRelabel.DirectEntry { New = newLabel, Old = oldLabel });
+                relabel.Entries.Add(new FspRelabel.DirectEntry(oldLabel, newLabel));
             }
             else if (context.ForAll() != null)
             {
